@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amit Baruna — Coach Portal</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F5F5;
+    --surface: #FFFFFF;
+    --surface2: #F9F9F9;
+    --border: rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.15);
+    --accent: #CC2200;
+    --accent-hover: #AA1A00;
+    --text-primary: #0D0D0D;
+    --text-secondary: #555555;
+    --text-muted: #999999;
+    --error: #CC2200;
+    --success: #2A7A4B;
+    --input-bg: #FAFAFA;
+    --input-border: rgba(0,0,0,0.12);
+    --input-focus: rgba(204,34,0,0.15);
+    --shadow: 0 2px 24px rgba(0,0,0,0.07);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-wrap {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Logo */
+  .logo-block {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+
+  .logo-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .logo-name span {
+    color: var(--accent);
+  }
+
+  .logo-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 5px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .card-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 26px;
+  }
+
+  /* Form */
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 0.5px solid var(--input-border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field input::placeholder { color: var(--text-muted); }
+
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--input-focus);
+    background: #fff;
+  }
+
+  .field input:hover:not(:focus) { border-color: var(--border-hover); }
+
+  .password-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+
+  .password-row label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .forgot-link {
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .forgot-link:hover { opacity: 0.75; }
+
+  .input-wrap { position: relative; }
+  .input-wrap input { padding-right: 44px; }
+
+  .toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+
+  .toggle-pw:hover { color: var(--text-secondary); }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(204,34,0,0.05);
+    border: 0.5px solid rgba(204,34,0,0.2);
+    border-radius: 8px;
+  }
+
+  .error-msg.visible { display: block; }
+
+  /* Button */
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    position: relative;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-login:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 16px rgba(204,34,0,0.25);
+  }
+
+  .btn-login:active { transform: scale(0.99); }
+
+  .btn-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-login .btn-text { transition: opacity 0.2s; }
+  .btn-login.loading .btn-text { opacity: 0; }
+  .btn-login.loading .spinner { display: inline-block; }
+  .btn-login .spinner { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Success */
+  .success-overlay { display: none; text-align: center; padding: 8px 0; }
+  .success-overlay.visible { display: block; }
+
+  .success-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(42,122,75,0.08);
+    border: 0.5px solid rgba(42,122,75,0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  .success-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+  .success-sub { font-size: 13px; color: var(--text-secondary); }
+
+  /* Forgot */
+  #forgot-wrap { display: none; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  /* Footer */
+  .login-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .login-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .login-footer a:hover { color: var(--text-primary); }
+
+  .security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="login-wrap">
+
+    <div class="logo-block">
+      <img src="favicon.png" alt="Amit Baruna" class="logo-img" />
+      <div class="logo-name">AMIT <span>BARUNA</span></div>
+      <div class="logo-sub">Metabolic Health Coach</div>
+    </div>
+
+    <div class="card">
+
+      <div id="login-form-wrap">
+        <div class="card-title">Coach portal</div>
+        <div class="card-sub">Private access — sign in to continue</div>
+
+        <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="amit@amitbaruna.com" autocomplete="email" required />
+          </div>
+
+          <div class="field">
+            <div class="password-row">
+              <label for="password">Password</label>
+              <a href="#" class="forgot-link" onclick="showForgot(event)">Forgot password?</a>
+            </div>
+            <div class="input-wrap">
+              <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required />
+              <button type="button" class="toggle-pw" onclick="togglePassword()" aria-label="Show password">
+                <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="error-msg" id="error-msg">Incorrect email or password. Please try again.</div>
+
+          <button type="submit" class="btn-login" id="login-btn">
+            <span class="btn-text">Sign in</span>
+            <span class="spinner"></span>
+          </button>
+
+        </form>
+      </div>
+
+      <!-- Success -->
+      <div class="success-overlay" id="success-overlay">
+        <div class="success-icon">
+          <svg width="24" height="24" fill="none" stroke="#2A7A4B" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <div class="success-title">Signed in</div>
+        <div class="success-sub">Redirecting to your dashboard...</div>
+      </div>
+
+      <!-- Forgot password -->
+      <div id="forgot-wrap">
+        <div class="card-title">Reset password</div>
+        <div class="card-sub">Enter your email and we'll send a reset link</div>
+        <div class="field">
+          <label for="reset-email">Email address</label>
+          <input type="email" id="reset-email" placeholder="amit@amitbaruna.com" />
+        </div>
+        <div class="error-msg" id="reset-msg"></div>
+        <button class="btn-login" onclick="sendReset()">
+          <span class="btn-text">Send reset link</span>
+          <span class="spinner"></span>
+        </button>
+        <button class="btn-secondary" onclick="showLogin()">Back to sign in</button>
+      </div>
+
+    </div>
+
+    <div class="security-note">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      Secured · Private access only
+    </div>
+
+    <div class="login-footer">
+      <a href="https://amitbaruna.com" target="_blank">← Back to amitbaruna.com</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://hcksvwxbjcehfxbfgqdo.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_PUBLISHABLE_KEY_HERE';
+
+  async function supabaseFetch(path, options = {}) {
+    const res = await fetch(SUPABASE_URL + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        ...(options.headers || {})
+      }
+    });
+    return res.json();
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!email || !password) {
+      errorMsg.textContent = 'Please enter your email and password.';
+      errorMsg.classList.add('visible');
+      return;
+    }
+
+    errorMsg.classList.remove('visible');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+      const data = await supabaseFetch('/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+
+      if (data.access_token) {
+        localStorage.setItem('sb_access_token', data.access_token);
+        localStorage.setItem('sb_refresh_token', data.refresh_token);
+        document.getElementById('login-form-wrap').style.display = 'none';
+        document.getElementById('success-overlay').classList.add('visible');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      errorMsg.textContent = 'Incorrect email or password. Please try again.';
+      errorMsg.classList.add('visible');
+    }
+  }
+
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('eye-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    } else {
+      input.type = 'password';
+      icon.innerHTML = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  }
+
+  function showForgot(e) {
+    e.preventDefault();
+    document.getElementById('login-form-wrap').style.display = 'none';
+    document.getElementById('forgot-wrap').style.display = 'block';
+  }
+
+  function showLogin() {
+    document.getElementById('forgot-wrap').style.display = 'none';
+    document.getElementById('login-form-wrap').style.display = 'block';
+  }
+
+  async function sendReset() {
+    const email = document.getElementById('reset-email').value.trim();
+    const msg = document.getElementById('reset-msg');
+    if (!email) {
+      msg.textContent = 'Please enter your email address.';
+      msg.style.color = 'var(--error)';
+      msg.classList.add('visible');
+      return;
+    }
+    try {
+      await supabaseFetch('/auth/v1/recover', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+      });
+      msg.textContent = 'Reset link sent. Check your inbox.';
+      msg.style.color = 'var(--success)';
+      msg.classList.add('visible');
+    } catch {
+      msg.textContent = 'Something went wrong. Please try again.';
+      msg.style.color = 'var(--error)';
+      msg.classList.add('visible');
+    }
+  }
+
+  window.addEventListener('load', () => {
+    const token = localStorage.getItem('sb_access_token');
+    if (token) window.location.href = 'dashboard.html';
+  });
+</script>
+
+</body>
+</html>
