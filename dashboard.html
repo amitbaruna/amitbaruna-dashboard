@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AB Dashboard</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --sidebar-bg:#1E1E2E;
+  --sidebar-text:rgba(255,255,255,0.55);
+  --sidebar-active:#fff;
+  --sidebar-active-bg:rgba(255,255,255,0.08);
+  --accent:#CC2200;
+  --accent-hover:#AA1A00;
+  --bg:#F5F5F5;
+  --surface:#FFFFFF;
+  --border:rgba(0,0,0,0.07);
+  --border-md:rgba(0,0,0,0.12);
+  --text-primary:#0D0D0D;
+  --text-secondary:#555;
+  --text-muted:#999;
+  --success-bg:#EAF3DE;
+  --success-text:#3B6D11;
+  --warning-bg:#FAEEDA;
+  --warning-text:#854F0B;
+  --danger-bg:#FAECE7;
+  --danger-text:#993C1D;
+  --info-bg:#E6F1FB;
+  --info-text:#185FA5;
+  --purple-bg:#EEEDFE;
+  --purple-text:#534AB7;
+  --shadow:0 1px 12px rgba(0,0,0,0.06);
+  --radius:10px;
+  --radius-lg:14px;
+}
+
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text-primary);-webkit-font-smoothing:antialiased;}
+
+/* Layout */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* Sidebar */
+.sidebar{width:210px;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:0.5px solid rgba(255,255,255,0.07);}
+.sidebar-logo img{width:36px;height:36px;border-radius:8px;display:block;margin-bottom:10px;}
+.sidebar-logo-name{font-size:13px;font-weight:600;color:#fff;letter-spacing:0.03em;}
+.sidebar-logo-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.nav-section{font-size:10px;color:rgba(255,255,255,0.28);padding:14px 16px 4px;text-transform:uppercase;letter-spacing:0.08em;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:var(--sidebar-text);cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;}
+.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04);}
+.nav-item.active{color:var(--sidebar-active);background:var(--sidebar-active-bg);border-left-color:var(--accent);}
+.nav-item i{font-size:16px;flex-shrink:0;}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:0.5px solid rgba(255,255,255,0.07);}
+.signout-btn{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;transition:color 0.15s;}
+.signout-btn:hover{color:rgba(255,255,255,0.7);}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surface);border-bottom:0.5px solid var(--border);flex-shrink:0;}
+.topbar-title{font-size:15px;font-weight:600;color:var(--text-primary);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;cursor:pointer;}
+
+/* Content area */
+.content{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* Screens */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* Stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+.stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:box-shadow 0.15s,border-color 0.15s;}
+.stat-card:hover{box-shadow:var(--shadow);border-color:var(--border-md);}
+.stat-label{font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:500;}
+.stat-value{font-size:24px;font-weight:600;color:var(--text-primary);line-height:1;}
+.stat-sub{font-size:11px;color:var(--text-secondary);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* Cards */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;}
+.card:last-child{margin-bottom:0;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.card-title{font-size:13px;font-weight:600;color:var(--text-primary);}
+.card-action{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;}
+.card-action:hover{opacity:0.8;}
+
+/* Two col */
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px;}
+.three-col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px;}
+
+/* Rows */
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.1s;}
+.row:hover{background:#F9F9F9;margin:0 -4px;padding:8px 4px;border-radius:6px;}
+.row:last-child{border-bottom:none;}
+
+/* Avatar */
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;background:var(--bg);color:var(--text-secondary);}
+.av-red{background:var(--danger-bg);color:var(--danger-text);}
+.av-green{background:var(--success-bg);color:var(--success-text);}
+.av-blue{background:var(--info-bg);color:var(--info-text);}
+.av-purple{background:var(--purple-bg);color:var(--purple-text);}
+.av-orange{background:var(--warning-bg);color:var(--warning-text);}
+
+.rname{font-size:13px;font-weight:500;color:var(--text-primary);}
+.rmeta{font-size:11px;color:var(--text-muted);margin-top:1px;}
+
+/* Badges */
+.badges{display:flex;gap:5px;margin-left:auto;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.b-new{background:var(--info-bg);color:var(--info-text);}
+.b-active{background:var(--success-bg);color:var(--success-text);}
+.b-followup{background:#FBEAF0;color:#993556;}
+.b-hot{background:var(--danger-bg);color:var(--danger-text);}
+.b-inactive{background:#F1EFE8;color:#5F5E5A;}
+.b-contacted{background:var(--warning-bg);color:var(--warning-text);}
+.b-confirmed{background:var(--success-bg);color:var(--success-text);}
+.b-pending{background:var(--warning-bg);color:var(--warning-text);}
+.b-cal{background:#EEF4FF;color:#2563EB;border:0.5px solid #BFDBFE;}
+.b-glp{background:var(--purple-bg);color:var(--purple-text);}
+
+/* Layer bars */
+.lbar{margin-bottom:9px;}
+.lbar:last-child{margin-bottom:0;}
+.ll{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:3px;}
+.ll strong{color:var(--text-primary);font-weight:500;}
+.bt{height:6px;background:#F1EFE8;border-radius:4px;overflow:hidden;}
+.bf{height:100%;border-radius:4px;transition:width 0.5s ease;}
+
+/* Call dot */
+.cdot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0;}
+.ctime{font-size:11px;color:var(--text-muted);margin-left:auto;flex-shrink:0;white-space:nowrap;}
+
+/* Search */
+.search-wrap{display:flex;align-items:center;gap:8px;background:#F9F9F9;border:0.5px solid var(--border-md);border-radius:var(--radius);padding:8px 12px;margin-bottom:12px;}
+.search-wrap i{font-size:15px;color:var(--text-muted);}
+.search-wrap input{border:none;background:transparent;font-size:13px;color:var(--text-primary);outline:none;flex:1;font-family:inherit;}
+.search-wrap input::placeholder{color:var(--text-muted);}
+
+/* Bookings */
+.booking-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+.booking-row:last-child{border-bottom:none;}
+.bdate{width:40px;height:40px;background:var(--sidebar-bg);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.bdate-day{font-size:14px;font-weight:600;color:#fff;}
+.bdate-mon{font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;}
+
+/* Plans */
+.plan-card{background:#F9F9F9;border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;}
+.plan-card:last-child{margin-bottom:0;}
+.plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.plan-name{font-size:13px;font-weight:500;color:var(--text-primary);}
+.plan-type{font-size:10px;padding:2px 8px;border-radius:10px;}
+.pt-w{background:var(--success-bg);color:var(--success-text);}
+.pt-n{background:var(--info-bg);color:var(--info-text);}
+.plan-item{font-size:11px;color:var(--text-secondary);padding:2px 0;}
+.plan-day{font-size:11px;font-weight:500;color:var(--text-primary);margin-top:6px;margin-bottom:2px;}
+
+/* Analytics */
+.an-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+.trend-up{color:#3B6D11;font-size:11px;margin-top:4px;}
+.trend-dn{color:#993C1D;font-size:11px;margin-top:4px;}
+.chart-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;margin-top:12px;}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.bc-bar{width:100%;border-radius:4px 4px 0 0;transition:height 0.4s ease;}
+.bc-lbl{font-size:10px;color:var(--text-muted);}
+.flag-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.flag-name{font-size:12px;color:var(--text-primary);flex:1;}
+.flag-cnt{font-size:12px;font-weight:500;color:var(--text-primary);}
+.fbar{height:5px;background:#F1EFE8;border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.fbf{height:100%;border-radius:4px;}
+.gpill{display:flex;gap:4px;margin-top:3px;margin-bottom:2px;}
+.gp{font-size:10px;padding:1px 7px;border-radius:10px;}
+.gp-f{background:#FBEAF0;color:#993556;}
+.gp-m{background:var(--info-bg);color:var(--info-text);}
+.age-tag{font-size:10px;color:var(--text-muted);margin-bottom:8px;}
+
+/* Profile */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;margin-bottom:16px;font-weight:500;}
+.back-btn:hover{opacity:0.8;}
+.profile-hero{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;display:flex;align-items:flex-start;gap:16px;}
+.profile-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;flex-shrink:0;}
+.profile-name{font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
+.profile-meta{font-size:12px;color:var(--text-muted);margin-bottom:8px;}
+.profile-badges{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* Form elements */
+.form-field{margin-bottom:14px;}
+.form-label{font-size:12px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:6px;}
+.form-input{width:100%;background:#F9F9F9;border:0.5px solid var(--border-md);border-radius:var(--radius);padding:10px 12px;font-size:13px;color:var(--text-primary);font-family:inherit;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(204,34,0,0.08);background:#fff;}
+.form-input::placeholder{color:var(--text-muted);}
+textarea.form-input{resize:vertical;min-height:80px;}
+select.form-input{cursor:pointer;}
+
+/* Buttons */
+.btn-primary{padding:10px 18px;background:var(--accent);border:none;border-radius:var(--radius);font-size:13px;font-weight:500;color:#fff;font-family:inherit;cursor:pointer;transition:background 0.2s;}
+.btn-primary:hover{background:var(--accent-hover);}
+.btn-primary.full{width:100%;}
+.btn-outline{padding:9px 16px;background:transparent;border:0.5px solid var(--border-md);border-radius:var(--radius);font-size:13px;color:var(--text-secondary);font-family:inherit;cursor:pointer;transition:all 0.15s;}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-outline.full{width:100%;margin-top:8px;}
+
+/* Divider */
+.divider{height:0.5px;background:var(--border);margin:14px 0;}
+
+/* Empty state */
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+.empty i{font-size:32px;display:block;margin-bottom:10px;opacity:0.4;}
+
+/* Notification dot */
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+/* Renewal warning */
+.renewal-urgent{background:#FEF2F2;border:0.5px solid #FECACA;border-radius:var(--radius);padding:8px 12px;font-size:12px;color:#991B1B;display:flex;align-items:center;gap:6px;}
+.renewal-soon{background:var(--warning-bg);border:0.5px solid #FDE68A;border-radius:var(--radius);padding:8px 12px;font-size:12px;color:var(--warning-text);display:flex;align-items:center;gap:6px;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1E1E2E;color:#fff;padding:12px 18px;border-radius:var(--radius);font-size:13px;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:4px;}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="favicon.png" alt="AB">
+      <div class="sidebar-logo-name">AMIT BARUNA</div>
+      <div class="sidebar-logo-sub">Coach Portal</div>
+    </div>
+
+    <div class="nav-item active" data-screen="overview">
+      <i class="ti ti-layout-dashboard"></i> Overview
+    </div>
+
+    <div class="nav-section">Clients</div>
+    <div class="nav-item" data-screen="clients">
+      <i class="ti ti-users"></i> All clients
+    </div>
+    <div class="nav-item" data-screen="leads">
+      <i class="ti ti-user-plus"></i> Leads
+    </div>
+
+    <div class="nav-section">CRM</div>
+    <div class="nav-item" data-screen="calllogs">
+      <i class="ti ti-phone"></i> Call logs
+    </div>
+    <div class="nav-item" data-screen="bookings">
+      <i class="ti ti-calendar"></i> Bookings
+    </div>
+
+    <div class="nav-section">Content</div>
+    <div class="nav-item" data-screen="plans">
+      <i class="ti ti-clipboard-list"></i> Plans
+    </div>
+    <div class="nav-item" data-screen="analytics">
+      <i class="ti ti-chart-bar"></i> Analytics
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="signout-btn" onclick="signOut()">
+        <i class="ti ti-logout" style="font-size:15px;"></i> Sign out
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Good morning, Amit</div>
+      <div class="topbar-right">
+        <i class="ti ti-bell" style="font-size:18px;color:var(--text-muted);cursor:pointer;"></i>
+        <div class="topbar-avatar">AB</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="screen active" id="screen-overview">
+        <div class="stat-grid">
+          <div class="stat-card" onclick="goScreen('clients')">
+            <div class="stat-label">Active clients</div>
+            <div class="stat-value" id="ov-clients">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#639922;"></span><span id="ov-glp">Loading...</span></div>
+          </div>
+          <div class="stat-card" onclick="goScreen('leads')">
+            <div class="stat-label">New leads</div>
+            <div class="stat-value" id="ov-leads">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:var(--accent);"></span>This week</div>
+          </div>
+          <div class="stat-card" onclick="goScreen('bookings')">
+            <div class="stat-label">Calls today</div>
+            <div class="stat-value" id="ov-calls">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#378ADD;"></span>Scheduled</div>
+          </div>
+          <div class="stat-card" onclick="goScreen('leads')">
+            <div class="stat-label">Quiz completions</div>
+            <div class="stat-value" id="ov-quiz">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#888;"></span>Last 30 days</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent leads</div>
+              <span class="card-action" onclick="goScreen('leads')">View all →</span>
+            </div>
+            <div id="ov-leads-list">
+              <div class="empty"><i class="ti ti-user-plus"></i>No leads yet</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent call logs</div>
+              <span class="card-action" onclick="goScreen('calllogs')">View all →</span>
+            </div>
+            <div id="ov-calls-list">
+              <div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL CLIENTS -->
+      <div class="screen" id="screen-clients">
+        <div class="stat-grid">
+          <div class="stat-card" onclick="filterClients('all')">
+            <div class="stat-label">Total clients</div>
+            <div class="stat-value" id="cl-total">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#639922;"></span>All time</div>
+          </div>
+          <div class="stat-card" onclick="filterClients('glp1')">
+            <div class="stat-label">On GLP-1</div>
+            <div class="stat-value" id="cl-glp">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:var(--purple-text);"></span>Click to view</div>
+          </div>
+          <div class="stat-card" onclick="filterClients('pending-plan')">
+            <div class="stat-label">Pending plans</div>
+            <div class="stat-value" id="cl-pending">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#854F0B;"></span>Need attention</div>
+          </div>
+          <div class="stat-card" onclick="filterClients('renewal')">
+            <div class="stat-label">Upcoming renewals</div>
+            <div class="stat-value" id="cl-renewal">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:var(--accent);"></span>≤30 days left</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" id="clients-list-title">All clients</div>
+            <span class="card-action" onclick="showAddClient()">+ Add client</span>
+          </div>
+          <div class="search-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Search by name..." oninput="searchClients(this.value)" />
+          </div>
+          <div id="clients-list">
+            <div class="empty"><i class="ti ti-users"></i>No clients yet. Add your first client.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADS -->
+      <div class="screen" id="screen-leads">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total leads</div>
+            <div class="stat-value" id="ld-total">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:var(--accent);"></span>All time</div>
+          </div>
+          <div class="stat-card" onclick="filterLeads('new')">
+            <div class="stat-label">New this week</div>
+            <div class="stat-value" id="ld-new">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#378ADD;"></span>Uncontacted</div>
+          </div>
+          <div class="stat-card" onclick="filterLeads('followup')">
+            <div class="stat-label">Follow-ups</div>
+            <div class="stat-value" id="ld-followup">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:#993556;"></span>Warm, not paid</div>
+          </div>
+          <div class="stat-card" onclick="filterLeads('hot')">
+            <div class="stat-label">Hot leads</div>
+            <div class="stat-value" id="ld-hot">—</div>
+            <div class="stat-sub"><span class="sdot" style="background:var(--accent);"></span>2+ conditions</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" id="leads-list-title">All leads</div>
+            <span class="card-action" onclick="filterLeads('all')">Show all</span>
+          </div>
+          <div class="search-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Search leads..." oninput="searchLeads(this.value)" />
+          </div>
+          <div id="leads-list">
+            <div class="empty"><i class="ti ti-user-plus"></i>No leads yet. They will appear here once someone completes the quiz.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALL LOGS -->
+      <div class="screen" id="screen-calllogs">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Call history</div>
+            </div>
+            <div id="calllogs-list">
+              <div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Log a call</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Client</label>
+              <select class="form-input" id="call-client">
+                <option value="">Select client...</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-input" id="call-date" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Duration (minutes)</label>
+              <input type="number" class="form-input" id="call-duration" placeholder="45" min="1" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Notes</label>
+              <textarea class="form-input" id="call-notes" placeholder="What was discussed..."></textarea>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Follow-up date (optional)</label>
+              <input type="date" class="form-input" id="call-followup" />
+            </div>
+            <button class="btn-primary full" onclick="saveCallLog()">Save call log</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS -->
+      <div class="screen" id="screen-bookings">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Upcoming bookings</div>
+            </div>
+            <div id="bookings-list">
+              <div class="empty"><i class="ti ti-calendar"></i>No bookings yet</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Add booking</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Client</label>
+              <select class="form-input" id="book-client">
+                <option value="">Select client...</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-input" id="book-date" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Time</label>
+              <input type="time" class="form-input" id="book-time" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Type</label>
+              <select class="form-input" id="book-type">
+                <option>Strategy call</option>
+                <option>Layer review</option>
+                <option>Check-in call</option>
+                <option>Monthly review</option>
+                <option>Follow-up call</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Duration (minutes)</label>
+              <input type="number" class="form-input" id="book-duration" value="45" min="15" />
+            </div>
+            <button class="btn-primary full" onclick="saveBooking()">Add booking</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANS -->
+      <div class="screen" id="screen-plans">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Client plans</div>
+            </div>
+            <div id="plans-list">
+              <div class="empty"><i class="ti ti-clipboard-list"></i>No plans yet</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Create plan</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Client</label>
+              <select class="form-input" id="plan-client">
+                <option value="">Select client...</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Plan type</label>
+              <select class="form-input" id="plan-type">
+                <option value="workout">Workout</option>
+                <option value="nutrition">Nutrition</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Title</label>
+              <input type="text" class="form-input" id="plan-title" placeholder="e.g. Muscle Guard Protocol" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Plan content</label>
+              <textarea class="form-input" id="plan-content" rows="6" placeholder="Mon/Wed/Fri: Resistance training 45 min&#10;Protein target: 140g/day&#10;Tue/Thu: Zone 2 cardio 30 min"></textarea>
+            </div>
+            <button class="btn-primary full" onclick="savePlan()">Save plan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="screen" id="screen-analytics">
+        <div class="an-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total leads (30 days)</div>
+            <div class="stat-value" id="an-leads">—</div>
+            <div class="trend-up" id="an-leads-trend">Loading...</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Conversion rate</div>
+            <div class="stat-value" id="an-conv">—</div>
+            <div class="trend-up" id="an-conv-trend">Leads → clients</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Follow-ups pending</div>
+            <div class="stat-value" id="an-followup">—</div>
+            <div class="trend-dn" id="an-followup-note">Warm leads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg metabolic score</div>
+            <div class="stat-value" id="an-score">—</div>
+            <div class="trend-dn">Across all leads</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="card-title">Quiz submissions — last 8 weeks</div>
+          <div class="bar-chart" id="an-chart">
+            <div class="empty">Loading chart...</div>
+          </div>
+        </div>
+
+        <div class="three-col">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Condition flags</div></div>
+            <div id="an-flags">
+              <div class="empty" style="padding:20px 0;">No data yet</div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Medical conditions</div></div>
+            <div id="an-conditions">
+              <div class="empty" style="padding:20px 0;">No data yet</div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">🔥 Multi-condition leads</div></div>
+            <div id="an-multiflags">
+              <div class="empty" style="padding:20px 0;">No data yet</div>
+            </div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:10px;">Weakest layer overall</div>
+            <div id="an-layers">
+              <div class="empty" style="padding:10px 0;font-size:11px;">No data yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENT PROFILE -->
+      <div class="screen" id="screen-profile">
+        <div class="back-btn" id="profile-back" onclick="goBack()">
+          <i class="ti ti-arrow-left"></i> Back
+        </div>
+        <div class="profile-hero">
+          <div class="profile-av" id="profile-av"></div>
+          <div>
+            <div class="profile-name" id="profile-name"></div>
+            <div class="profile-meta" id="profile-meta"></div>
+            <div class="profile-badges" id="profile-badges"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header"><div class="card-title">5 Layer breakdown</div></div>
+            <div id="profile-layers"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:8px;">Known medical conditions</div>
+            <div id="profile-conditions"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Call history</div></div>
+            <div id="profile-calls"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Active plans</div></div>
+            <div id="profile-plans"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Bookings</div></div>
+            <div id="profile-bookings"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:10px;">Notes</div>
+            <div id="profile-notes-display" style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;"></div>
+            <textarea class="form-input" id="profile-notes-input" rows="3" placeholder="Add notes about this client..."></textarea>
+            <button class="btn-primary" style="margin-top:8px;" onclick="saveClientNotes()">Save notes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEAD PROFILE -->
+      <div class="screen" id="screen-lead-profile">
+        <div class="back-btn" onclick="goScreen('leads')">
+          <i class="ti ti-arrow-left"></i> Back to leads
+        </div>
+        <div class="profile-hero">
+          <div class="profile-av" id="lp-av"></div>
+          <div>
+            <div class="profile-name" id="lp-name"></div>
+            <div class="profile-meta" id="lp-meta"></div>
+            <div class="profile-badges" id="lp-badges"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header"><div class="card-title">5 Layer breakdown</div></div>
+            <div id="lp-layers"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:8px;">Known medical conditions</div>
+            <div id="lp-conditions"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:8px;">Quiz answers summary</div>
+            <div id="lp-flags"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Lead status</div></div>
+            <div class="form-field">
+              <label class="form-label">Update status</label>
+              <select class="form-input" id="lp-status-select">
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="followup">Follow-up</option>
+                <option value="converted">Converted to client</option>
+                <option value="dead">Not interested</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Your notes</label>
+              <textarea class="form-input" id="lp-notes" rows="4" placeholder="Call notes, observations..."></textarea>
+            </div>
+            <button class="btn-primary full" onclick="saveLeadStatus()">Update lead</button>
+            <button class="btn-outline full" onclick="convertToClient()">Convert to client</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://hcksvwxbjcehfxbfgqdo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_8P0solsUeueG2VXNWSoujg_UuTImaJH';
+
+// ── State ─────────────────────────────────────────────────────
+let currentScreen = 'overview';
+let previousScreen = 'overview';
+let allClients = [];
+let allLeads = [];
+let allCallLogs = [];
+let allBookings = [];
+let allPlans = [];
+let currentProfileId = null;
+let currentLeadId = null;
+
+// ── Auth guard ────────────────────────────────────────────────
+const token = localStorage.getItem('sb_access_token');
+if (!token) window.location.href = 'index.html';
+
+// ── Supabase fetch ─────────────────────────────────────────────
+async function db(path, options = {}) {
+  const res = await fetch(SUPABASE_URL + path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + token,
+      'Prefer': 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  if (!res.ok && res.status !== 204) {
+    const err = await res.json().catch(() => ({}));
+    console.error('DB error:', err);
+    return null;
+  }
+  if (res.status === 204) return [];
+  return res.json();
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function goScreen(name) {
+  previousScreen = currentScreen;
+  currentScreen = name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const screen = document.getElementById('screen-' + name);
+  if (screen) screen.classList.add('active');
+  const navItem = document.querySelector(`[data-screen="${name}"]`);
+  if (navItem) navItem.classList.add('active');
+  const titles = {
+    overview: getGreeting(),
+    clients: 'All clients',
+    leads: 'Leads',
+    calllogs: 'Call logs',
+    bookings: 'Bookings',
+    plans: 'Plans',
+    analytics: 'Analytics',
+    profile: '',
+    'lead-profile': ''
+  };
+  document.getElementById('topbar-title').textContent = titles[name] || '';
+}
+
+function goBack() {
+  goScreen(previousScreen || 'clients');
+}
+
+document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
+  item.addEventListener('click', () => {
+    const screen = item.dataset.screen;
+    goScreen(screen);
+    loadScreen(screen);
+  });
+});
+
+function loadScreen(name) {
+  if (name === 'overview') loadOverview();
+  if (name === 'clients') loadClients();
+  if (name === 'leads') loadLeads();
+  if (name === 'calllogs') loadCallLogs();
+  if (name === 'bookings') loadBookings();
+  if (name === 'plans') loadPlans();
+  if (name === 'analytics') loadAnalytics();
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning, Amit';
+  if (h < 17) return 'Good afternoon, Amit';
+  return 'Good evening, Amit';
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function avColor(name) {
+  const colors = ['av-red','av-green','av-blue','av-purple','av-orange'];
+  let hash = 0;
+  for (let c of (name || '')) hash = c.charCodeAt(0) + hash;
+  return colors[hash % colors.length];
+}
+
+function statusBadge(status) {
+  const map = {
+    new: ['b-new', 'New'],
+    contacted: ['b-contacted', 'Contacted'],
+    followup: ['b-followup', 'Follow-up'],
+    converted: ['b-active', 'Converted'],
+    dead: ['b-inactive', 'Not interested'],
+    active: ['b-active', 'Active'],
+    inactive: ['b-inactive', 'Inactive']
+  };
+  const [cls, label] = map[status] || ['b-inactive', status || '—'];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function layerColor(pct) {
+  if (pct < 45) return '#D85A30';
+  if (pct < 65) return '#EF9F27';
+  return '#639922';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+}
+
+function daysLeft(expiry) {
+  if (!expiry) return null;
+  const diff = new Date(expiry) - new Date();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+// ── Overview ───────────────────────────────────────────────────
+async function loadOverview() {
+  const [clients, leads, calls, bookings] = await Promise.all([
+    db('/rest/v1/clients?select=*&status=eq.active'),
+    db('/rest/v1/leads?select=*&order=created_at.desc&limit=50'),
+    db('/rest/v1/call_logs?select=*&order=created_at.desc&limit=4'),
+    db('/rest/v1/booking?select=*&order=booking_date.asc')
+  ]);
+
+  const activeClients = clients || [];
+  const allLeadsData = leads || [];
+  const recentCalls = calls || [];
+
+  const glpCount = activeClients.filter(c => c.notes && c.notes.toLowerCase().includes('glp')).length;
+  document.getElementById('ov-clients').textContent = activeClients.length;
+  document.getElementById('ov-glp').textContent = glpCount ? `${glpCount} on GLP-1` : 'All active';
+
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 86400000);
+  const newLeads = allLeadsData.filter(l => new Date(l.created_at) > weekAgo);
+  document.getElementById('ov-leads').textContent = newLeads.length;
+
+  const today = now.toISOString().split('T')[0];
+  const todayCalls = (bookings || []).filter(b => b.booking_date === today);
+  document.getElementById('ov-calls').textContent = todayCalls.length;
+  document.getElementById('ov-quiz').textContent = allLeadsData.length;
+
+  // Recent leads list
+  const leadsList = document.getElementById('ov-leads-list');
+  if (allLeadsData.length === 0) {
+    leadsList.innerHTML = '<div class="empty"><i class="ti ti-user-plus"></i>No leads yet</div>';
+  } else {
+    leadsList.innerHTML = allLeadsData.slice(0, 5).map(l => {
+      const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+      const isHot = flags.length >= 2;
+      const hasCal = l.notes && l.notes.includes('calendly');
+      return `<div class="row" onclick="openLeadProfile(${l.id})">
+        <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
+        <div>
+          <div class="rname">${l.name || '—'}</div>
+          <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.slice(0,2).join(', ') || 'No flags'}</div>
+        </div>
+        <div class="badges">
+          ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
+          ${statusBadge(l.status || 'new')}
+          ${hasCal ? '<span class="badge b-cal">📅 Calendly</span>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Recent calls
+  const callsList = document.getElementById('ov-calls-list');
+  if (recentCalls.length === 0) {
+    callsList.innerHTML = '<div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>';
+  } else {
+    callsList.innerHTML = recentCalls.map(c => {
+      const client = activeClients.find(cl => cl.id === c.client_id);
+      return `<div class="row">
+        <div class="cdot"></div>
+        <div>
+          <div class="rname">${client ? client.name : 'Unknown client'}</div>
+          <div class="rmeta">${c.notes ? c.notes.slice(0, 60) + (c.notes.length > 60 ? '...' : '') : 'No notes'}</div>
+        </div>
+        <div class="ctime">${formatDate(c.call_date)}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── Clients ────────────────────────────────────────────────────
+async function loadClients(filter = 'all') {
+  const data = await db('/rest/v1/clients?select=*&order=created_at.desc');
+  allClients = data || [];
+
+  const glpCount = allClients.filter(c => c.notes && c.notes.toLowerCase().includes('glp')).length;
+  const pendingPlan = allClients.filter(c => !c.notes || !c.notes.includes('plan')).length;
+  const renewalCount = allClients.filter(c => {
+    const d = daysLeft(c.plan_expiry);
+    return d !== null && d <= 30 && d > 0;
+  }).length;
+
+  document.getElementById('cl-total').textContent = allClients.filter(c => c.status === 'active').length;
+  document.getElementById('cl-glp').textContent = glpCount;
+  document.getElementById('cl-pending').textContent = pendingPlan;
+  document.getElementById('cl-renewal').textContent = renewalCount;
+
+  renderClients(allClients, filter);
+  populateClientDropdowns();
+}
+
+function renderClients(clients, filter = 'all') {
+  const list = document.getElementById('clients-list');
+  let filtered = clients;
+  if (filter === 'glp1') filtered = clients.filter(c => c.notes && c.notes.toLowerCase().includes('glp'));
+  if (filter === 'inactive') filtered = clients.filter(c => c.status === 'inactive');
+  if (filter === 'renewal') filtered = clients.filter(c => { const d = daysLeft(c.plan_expiry); return d !== null && d <= 30 && d > 0; });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-users"></i>No clients found.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(c => {
+    const days = daysLeft(c.plan_expiry);
+    const renewalTag = days !== null && days <= 30 && days > 0
+      ? `<span class="badge" style="background:#FEE2E2;color:#991B1B;">${days}d left</span>` : '';
+    return `<div class="row" onclick="openClientProfile(${c.id})">
+      <div class="av ${avColor(c.name)}">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="rname">${c.name}</div>
+        <div class="rmeta">${c.gender || ''} · ${c.age_range || ''} · Since ${formatDate(c.start_date)}</div>
+      </div>
+      <div class="badges">
+        ${renewalTag}
+        ${statusBadge(c.status || 'active')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterClients(f) {
+  const titles = {all:'All clients',glp1:'GLP-1 clients','pending-plan':'Pending plans',renewal:'Upcoming renewals',inactive:'Inactive clients'};
+  document.getElementById('clients-list-title').textContent = titles[f] || 'Clients';
+  renderClients(allClients, f);
+}
+
+function searchClients(q) {
+  const filtered = allClients.filter(c => c.name && c.name.toLowerCase().includes(q.toLowerCase()));
+  renderClients(filtered);
+}
+
+async function openClientProfile(id) {
+  currentProfileId = id;
+  previousScreen = currentScreen;
+  goScreen('profile');
+  document.getElementById('topbar-title').textContent = 'Client profile';
+
+  const [client, calls, plans, bookings] = await Promise.all([
+    db(`/rest/v1/clients?id=eq.${id}&select=*`).then(r => r && r[0]),
+    db(`/rest/v1/call_logs?client_id=eq.${id}&select=*&order=call_date.desc`),
+    db(`/rest/v1/plans?client_id=eq.${id}&select=*`),
+    db(`/rest/v1/booking?client_id=eq.${id}&select=*&order=booking_date.asc`)
+  ]);
+
+  if (!client) return;
+
+  const av = document.getElementById('profile-av');
+  av.className = `profile-av ${avColor(client.name)}`;
+  av.textContent = initials(client.name);
+
+  document.getElementById('profile-name').textContent = client.name;
+  document.getElementById('profile-meta').textContent =
+    [client.gender, client.age_range, client.whatsapp ? `📱 ${client.whatsapp}` : '', client.email || ''].filter(Boolean).join(' · ');
+
+  const badges = document.getElementById('profile-badges');
+  badges.innerHTML = statusBadge(client.status || 'active');
+  if (client.notes && client.notes.toLowerCase().includes('glp')) badges.innerHTML += '<span class="badge b-glp">GLP-1</span>';
+
+  // Layers
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  document.getElementById('profile-layers').innerHTML = layerKeys.map((k, i) => {
+    const val = client[k] || 0;
+    return `<div class="lbar">
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
+      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
+    </div>`;
+  }).join('');
+
+  // Conditions
+  const conds = client.flags ? client.flags.split(',').filter(Boolean) : [];
+  document.getElementById('profile-conditions').innerHTML = conds.length
+    ? conds.map(c => `<span class="badge b-hot" style="margin-right:4px;margin-bottom:4px;">${c.trim()}</span>`).join('')
+    : '<span style="font-size:12px;color:var(--text-muted);">None reported</span>';
+
+  // Calls
+  const callsEl = document.getElementById('profile-calls');
+  const callsData = calls || [];
+  callsEl.innerHTML = callsData.length
+    ? callsData.map(c => `<div class="row">
+        <div class="cdot"></div>
+        <div><div class="rname">${c.notes ? c.notes.slice(0,50) : 'Call'}</div>
+        <div class="rmeta">${c.duration_minutes || 0} min</div></div>
+        <div class="ctime">${formatDate(c.call_date)}</div>
+      </div>`).join('')
+    : '<div class="empty" style="padding:16px 0;">No calls logged yet</div>';
+
+  // Plans
+  const plansEl = document.getElementById('profile-plans');
+  const plansData = plans || [];
+  plansEl.innerHTML = plansData.length
+    ? plansData.map(p => `<div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name">${p.title}</div>
+          <span class="plan-type ${p.type === 'workout' ? 'pt-w' : 'pt-n'}">${p.type}</span>
+        </div>
+        <div class="plan-item">${(p.content || '').replace(/\n/g,'<br>')}</div>
+      </div>`).join('')
+    : '<div class="empty" style="padding:16px 0;">No plans assigned yet</div>';
+
+  // Bookings
+  const bookEl = document.getElementById('profile-bookings');
+  const bookData = bookings || [];
+  bookEl.innerHTML = bookData.length
+    ? bookData.map(b => {
+        const d = new Date(b.booking_date);
+        return `<div class="booking-row">
+          <div class="bdate"><div class="bdate-day">${d.getDate()}</div><div class="bdate-mon">${d.toLocaleString('en',{month:'short'})}</div></div>
+          <div><div class="rname">${b.type || 'Call'} · ${b.booking_time || ''}</div><div class="rmeta">${b.duration_minutes || 45} min</div></div>
+          <div class="badges"><span class="badge b-confirmed">Confirmed</span></div>
+        </div>`;
+      }).join('')
+    : '<div style="font-size:12px;color:var(--text-muted);">No bookings</div>';
+
+  // Notes
+  document.getElementById('profile-notes-input').value = client.notes || '';
+}
+
+async function saveClientNotes() {
+  const notes = document.getElementById('profile-notes-input').value;
+  await db(`/rest/v1/clients?id=eq.${currentProfileId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ notes })
+  });
+  showToast('Notes saved');
+}
+
+// ── Leads ──────────────────────────────────────────────────────
+async function loadLeads(filter = 'all') {
+  const data = await db('/rest/v1/leads?select=*&order=created_at.desc');
+  allLeads = data || [];
+
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 86400000);
+  const newCount = allLeads.filter(l => new Date(l.created_at) > weekAgo).length;
+  const followupCount = allLeads.filter(l => l.status === 'followup').length;
+  const hotCount = allLeads.filter(l => {
+    const f = l.flags ? l.flags.split(',').filter(Boolean).length : 0;
+    return f >= 2;
+  }).length;
+
+  document.getElementById('ld-total').textContent = allLeads.length;
+  document.getElementById('ld-new').textContent = newCount;
+  document.getElementById('ld-followup').textContent = followupCount;
+  document.getElementById('ld-hot').textContent = hotCount;
+
+  renderLeads(allLeads, filter);
+}
+
+function renderLeads(leads, filter = 'all') {
+  const list = document.getElementById('leads-list');
+  let filtered = leads;
+  if (filter === 'new') {
+    const weekAgo = new Date(Date.now() - 7 * 86400000);
+    filtered = leads.filter(l => new Date(l.created_at) > weekAgo);
+  }
+  if (filter === 'followup') filtered = leads.filter(l => l.status === 'followup');
+  if (filter === 'hot') filtered = leads.filter(l => {
+    const f = l.flags ? l.flags.split(',').filter(Boolean).length : 0;
+    return f >= 2;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-user-plus"></i>No leads in this category.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(l => {
+    const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+    const isHot = flags.length >= 2;
+    const hasCal = l.notes && l.notes.toLowerCase().includes('calendly');
+    return `<div class="row" onclick="openLeadProfile(${l.id})">
+      <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="rname">${l.name || '—'}</div>
+        <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.join(', ') || 'No flags'} · ${l.gender || ''} · ${l.age_range || ''}</div>
+      </div>
+      <div class="badges">
+        ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
+        ${statusBadge(l.status || 'new')}
+        ${hasCal ? '<span class="badge b-cal">📅 Calendly</span>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterLeads(f) {
+  document.getElementById('leads-list-title').textContent =
+    {all:'All leads',new:'New this week',followup:'Follow-ups',hot:'🔥 Hot leads'}[f] || 'Leads';
+  renderLeads(allLeads, f);
+}
+
+function searchLeads(q) {
+  const filtered = allLeads.filter(l => l.name && l.name.toLowerCase().includes(q.toLowerCase()));
+  renderLeads(filtered);
+}
+
+async function openLeadProfile(id) {
+  currentLeadId = id;
+  previousScreen = currentScreen;
+  goScreen('lead-profile');
+  document.getElementById('topbar-title').textContent = 'Lead profile';
+
+  const lead = allLeads.find(l => l.id === id) || await db(`/rest/v1/leads?id=eq.${id}&select=*`).then(r => r && r[0]);
+  if (!lead) return;
+
+  const av = document.getElementById('lp-av');
+  av.className = `profile-av ${avColor(lead.name)}`;
+  av.textContent = initials(lead.name);
+
+  document.getElementById('lp-name').textContent = lead.name || '—';
+  document.getElementById('lp-meta').textContent =
+    [lead.gender, lead.age_range, lead.whatsapp ? `📱 ${lead.whatsapp}` : '', lead.email || ''].filter(Boolean).join(' · ');
+
+  const badges = document.getElementById('lp-badges');
+  const flags = lead.flags ? lead.flags.split(',').filter(Boolean) : [];
+  const isHot = flags.length >= 2;
+  badges.innerHTML = statusBadge(lead.status || 'new');
+  if (isHot) badges.innerHTML += '<span class="badge b-hot">🔥 Hot</span>';
+  if (lead.notes && lead.notes.toLowerCase().includes('calendly')) badges.innerHTML += '<span class="badge b-cal">📅 Calendly</span>';
+
+  // Layers
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  document.getElementById('lp-layers').innerHTML = layerKeys.map((k, i) => {
+    const val = lead[k] || 0;
+    return `<div class="lbar">
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
+      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
+    </div>`;
+  }).join('');
+
+  // Conditions & flags
+  document.getElementById('lp-conditions').innerHTML = flags.length
+    ? flags.map(f => `<span class="badge b-hot" style="margin-right:4px;margin-bottom:4px;">${f.trim()}</span>`).join('')
+    : '<span style="font-size:12px;color:var(--text-muted);">None reported</span>';
+
+  document.getElementById('lp-flags').innerHTML = `
+    <div style="font-size:12px;color:var(--text-secondary);">
+      Metabolic score: <strong>${lead.metabolic_score || '?'}</strong><br>
+      Submitted: ${formatDate(lead.created_at)}
+    </div>`;
+
+  document.getElementById('lp-status-select').value = lead.status || 'new';
+  document.getElementById('lp-notes').value = lead.notes && !lead.notes.toLowerCase().includes('calendly') ? lead.notes : '';
+}
+
+async function saveLeadStatus() {
+  const status = document.getElementById('lp-status-select').value;
+  const notes = document.getElementById('lp-notes').value;
+  await db(`/rest/v1/leads?id=eq.${currentLeadId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, notes })
+  });
+  showToast('Lead updated');
+  const lead = allLeads.find(l => l.id === currentLeadId);
+  if (lead) { lead.status = status; lead.notes = notes; }
+}
+
+async function convertToClient() {
+  const lead = allLeads.find(l => l.id === currentLeadId);
+  if (!lead) return;
+  if (!confirm(`Convert ${lead.name} to a client?`)) return;
+  const result = await db('/rest/v1/clients', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: lead.name,
+      email: lead.email,
+      whatsapp: lead.whatsapp,
+      gender: lead.gender,
+      age_range: lead.age_range,
+      status: 'active',
+      layer1_score: lead.layer1_score,
+      layer2_score: lead.layer2_score,
+      layer3_score: lead.layer3_score,
+      layer4_score: lead.layer4_score,
+      layer5_score: lead.layer5_score,
+      flags: lead.flags,
+      start_date: new Date().toISOString().split('T')[0]
+    })
+  });
+  if (result) {
+    await db(`/rest/v1/leads?id=eq.${currentLeadId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'converted' })
+    });
+    showToast(`${lead.name} converted to client!`);
+    setTimeout(() => goScreen('clients'), 1500);
+  }
+}
+
+// ── Call logs ──────────────────────────────────────────────────
+async function loadCallLogs() {
+  const data = await db('/rest/v1/call_logs?select=*&order=call_date.desc');
+  allCallLogs = data || [];
+  const list = document.getElementById('calllogs-list');
+  if (allCallLogs.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>';
+    return;
+  }
+  list.innerHTML = allCallLogs.map(c => {
+    const client = allClients.find(cl => cl.id === c.client_id);
+    return `<div class="row">
+      <div class="cdot"></div>
+      <div style="flex:1;">
+        <div class="rname">${client ? client.name : 'Unknown'}</div>
+        <div class="rmeta">${c.duration_minutes || 0} min · ${c.notes ? c.notes.slice(0,60) : 'No notes'}</div>
+        ${c.follow_up_date ? `<div class="rmeta">Follow-up: ${formatDate(c.follow_up_date)}</div>` : ''}
+      </div>
+      <div class="ctime">${formatDate(c.call_date)}</div>
+    </div>`;
+  }).join('');
+}
+
+async function saveCallLog() {
+  const clientId = document.getElementById('call-client').value;
+  const date = document.getElementById('call-date').value;
+  const duration = document.getElementById('call-duration').value;
+  const notes = document.getElementById('call-notes').value;
+  const followup = document.getElementById('call-followup').value;
+
+  if (!clientId || !date) { showToast('Please select a client and date'); return; }
+
+  const result = await db('/rest/v1/call_logs', {
+    method: 'POST',
+    body: JSON.stringify({
+      client_id: parseInt(clientId),
+      call_date: date,
+      duration_minutes: parseInt(duration) || null,
+      notes,
+      follow_up_date: followup || null,
+      follow_up_done: false
+    })
+  });
+
+  if (result) {
+    showToast('Call logged successfully');
+    document.getElementById('call-notes').value = '';
+    document.getElementById('call-duration').value = '';
+    document.getElementById('call-followup').value = '';
+    loadCallLogs();
+  }
+}
+
+// ── Bookings ───────────────────────────────────────────────────
+async function loadBookings() {
+  const data = await db('/rest/v1/booking?select=*&order=booking_date.asc');
+  allBookings = data || [];
+  const list = document.getElementById('bookings-list');
+  if (allBookings.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-calendar"></i>No bookings yet</div>';
+    return;
+  }
+  list.innerHTML = allBookings.map(b => {
+    const client = allClients.find(c => c.id === b.client_id);
+    const d = new Date(b.booking_date);
+    return `<div class="booking-row">
+      <div class="bdate"><div class="bdate-day">${d.getDate()}</div><div class="bdate-mon">${d.toLocaleString('en',{month:'short'})}</div></div>
+      <div style="flex:1;">
+        <div class="rname">${client ? client.name : 'Unknown'}</div>
+        <div class="rmeta">${b.booking_time || ''} · ${b.type || 'Call'} · ${b.duration_minutes || 45} min</div>
+      </div>
+      <div class="badges"><span class="badge b-confirmed">Confirmed</span></div>
+    </div>`;
+  }).join('');
+}
+
+async function saveBooking() {
+  const clientId = document.getElementById('book-client').value;
+  const date = document.getElementById('book-date').value;
+  const time = document.getElementById('book-time').value;
+  const type = document.getElementById('book-type').value;
+  const duration = document.getElementById('book-duration').value;
+
+  if (!clientId || !date) { showToast('Please select a client and date'); return; }
+
+  const result = await db('/rest/v1/booking', {
+    method: 'POST',
+    body: JSON.stringify({
+      client_id: parseInt(clientId),
+      booking_date: date,
+      booking_time: time,
+      type,
+      duration_minutes: parseInt(duration) || 45,
+      status: 'confirmed'
+    })
+  });
+
+  if (result) {
+    showToast('Booking added');
+    loadBookings();
+  }
+}
+
+// ── Plans ──────────────────────────────────────────────────────
+async function loadPlans() {
+  const data = await db('/rest/v1/plans?select=*&order=created_at.desc');
+  allPlans = data || [];
+  const list = document.getElementById('plans-list');
+  if (allPlans.length === 0) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-clipboard-list"></i>No plans yet</div>';
+    return;
+  }
+  list.innerHTML = allPlans.map(p => {
+    const client = allClients.find(c => c.id === p.client_id);
+    return `<div class="plan-card">
+      <div class="plan-header">
+        <div class="plan-name">${client ? client.name : 'Unknown'} — ${p.title}</div>
+        <span class="plan-type ${p.type === 'workout' ? 'pt-w' : 'pt-n'}">${p.type}</span>
+      </div>
+      <div class="plan-item">${(p.content || '').replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+async function savePlan() {
+  const clientId = document.getElementById('plan-client').value;
+  const type = document.getElementById('plan-type').value;
+  const title = document.getElementById('plan-title').value;
+  const content = document.getElementById('plan-content').value;
+
+  if (!clientId || !title) { showToast('Please select a client and add a title'); return; }
+
+  const result = await db('/rest/v1/plans', {
+    method: 'POST',
+    body: JSON.stringify({ client_id: parseInt(clientId), type, title, content, is_active: true })
+  });
+
+  if (result) {
+    showToast('Plan saved');
+    document.getElementById('plan-title').value = '';
+    document.getElementById('plan-content').value = '';
+    loadPlans();
+  }
+}
+
+// ── Analytics ──────────────────────────────────────────────────
+async function loadAnalytics() {
+  const [leads, clients] = await Promise.all([
+    db('/rest/v1/leads?select=*'),
+    db('/rest/v1/clients?select=*')
+  ]);
+
+  const leadsData = leads || [];
+  const clientsData = clients || [];
+
+  const conv = leadsData.length > 0
+    ? Math.round((leadsData.filter(l => l.status === 'converted').length / leadsData.length) * 100)
+    : 0;
+  const followups = leadsData.filter(l => l.status === 'followup').length;
+  const avgScore = leadsData.length > 0
+    ? Math.round(leadsData.reduce((s, l) => s + (l.metabolic_score || 0), 0) / leadsData.length)
+    : 0;
+
+  document.getElementById('an-leads').textContent = leadsData.length;
+  document.getElementById('an-conv').textContent = conv + '%';
+  document.getElementById('an-followup').textContent = followups;
+  document.getElementById('an-score').textContent = avgScore || '—';
+
+  // Bar chart — last 8 weeks
+  const chart = document.getElementById('an-chart');
+  if (leadsData.length === 0) {
+    chart.innerHTML = '<div class="empty">No data yet</div>';
+  } else {
+    const weeks = [];
+    for (let i = 7; i >= 0; i--) {
+      const start = new Date(Date.now() - (i + 1) * 7 * 86400000);
+      const end = new Date(Date.now() - i * 7 * 86400000);
+      const count = leadsData.filter(l => {
+        const d = new Date(l.created_at);
+        return d >= start && d < end;
+      }).length;
+      weeks.push({ label: `W${8 - i}`, count });
+    }
+    const max = Math.max(...weeks.map(w => w.count), 1);
+    chart.innerHTML = weeks.map((w, i) => {
+      const pct = Math.round((w.count / max) * 100);
+      const opacity = 0.3 + (i / 7) * 0.7;
+      return `<div class="bc">
+        <div class="bc-bar" style="height:${pct || 4}%;background:rgba(204,34,0,${opacity});min-height:4px;"></div>
+        <div class="bc-lbl">${w.label}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Flags breakdown
+  const flagMap = {};
+  const genderFlagMap = {};
+  leadsData.forEach(l => {
+    const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+    flags.forEach(f => {
+      const key = f.trim();
+      if (!flagMap[key]) { flagMap[key] = 0; genderFlagMap[key] = {f:0,m:0}; }
+      flagMap[key]++;
+      if (l.gender === 'Female') genderFlagMap[key].f++;
+      if (l.gender === 'Male') genderFlagMap[key].m++;
+    });
+  });
+
+  const sortedFlags = Object.entries(flagMap).sort((a,b) => b[1]-a[1]).slice(0,5);
+  const maxFlag = Math.max(...sortedFlags.map(f => f[1]), 1);
+  const flagColors = ['#D85A30','#EF9F27','#378ADD','#639922','#888'];
+
+  document.getElementById('an-flags').innerHTML = sortedFlags.length
+    ? sortedFlags.map(([name, cnt], i) => {
+        const gd = genderFlagMap[name];
+        const total = gd.f + gd.m;
+        const fPct = total ? Math.round((gd.f/total)*100) : 0;
+        const mPct = total ? 100 - fPct : 0;
+        return `<div class="flag-row"><div class="flag-name">${name}</div><div class="flag-cnt">${cnt}</div></div>
+          <div class="fbar"><div class="fbf" style="width:${Math.round((cnt/maxFlag)*100)}%;background:${flagColors[i]};"></div></div>
+          <div class="gpill">${fPct ? `<span class="gp gp-f">${fPct}% F</span>` : ''}${mPct ? `<span class="gp gp-m">${mPct}% M</span>` : ''}</div>
+          <div class="age-tag">Count: ${cnt}</div>`;
+      }).join('')
+    : '<div class="empty" style="padding:16px 0;">No flag data yet</div>';
+
+  // Medical conditions
+  const condMap = {};
+  const genderCondMap = {};
+  leadsData.forEach(l => {
+    const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+    flags.forEach(f => {
+      const key = f.trim();
+      if (!condMap[key]) { condMap[key] = 0; genderCondMap[key] = {f:0,m:0}; }
+      condMap[key]++;
+      if (l.gender === 'Female') genderCondMap[key].f++;
+      if (l.gender === 'Male') genderCondMap[key].m++;
+    });
+  });
+
+  const sortedConds = Object.entries(condMap).sort((a,b) => b[1]-a[1]).slice(0,4);
+  const maxCond = Math.max(...sortedConds.map(c => c[1]), 1);
+
+  document.getElementById('an-conditions').innerHTML = sortedConds.length
+    ? sortedConds.map(([name, cnt], i) => {
+        const gd = genderCondMap[name];
+        const total = gd.f + gd.m;
+        const fPct = total ? Math.round((gd.f/total)*100) : 0;
+        const mPct = total ? 100 - fPct : 0;
+        return `<div class="flag-row"><div class="flag-name">${name}</div><div class="flag-cnt">${cnt}</div></div>
+          <div class="fbar"><div class="fbf" style="width:${Math.round((cnt/maxCond)*100)}%;background:${flagColors[i]};"></div></div>
+          <div class="gpill">${fPct ? `<span class="gp gp-f">${fPct}% F</span>` : ''}${mPct ? `<span class="gp gp-m">${mPct}% M</span>` : ''}</div>
+          <div class="age-tag">Count: ${cnt}</div>`;
+      }).join('')
+    : '<div class="empty" style="padding:16px 0;">No condition data yet</div>';
+
+  // Multi-condition leads
+  const multiLeads = leadsData
+    .map(l => ({ ...l, flagCount: l.flags ? l.flags.split(',').filter(Boolean).length : 0 }))
+    .filter(l => l.flagCount >= 2)
+    .sort((a,b) => b.flagCount - a.flagCount)
+    .slice(0,5);
+
+  document.getElementById('an-multiflags').innerHTML = multiLeads.length
+    ? multiLeads.map(l => `<div class="row" style="cursor:pointer;" onclick="openLeadProfile(${l.id})">
+        <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
+        <div><div class="rname">${l.name}</div>
+        <div class="rmeta">${l.flags ? l.flags.split(',').slice(0,2).join(', ') : ''}</div></div>
+        <div class="badge b-hot">${l.flagCount} flags</div>
+      </div>`).join('')
+    : '<div class="empty" style="padding:10px 0;">No multi-condition leads yet</div>';
+
+  // Layer averages
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  const layerAvgs = layerKeys.map(k => {
+    const vals = leadsData.filter(l => l[k]).map(l => l[k]);
+    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  });
+
+  document.getElementById('an-layers').innerHTML = leadsData.length
+    ? layerAvgs.map((avg, i) => `<div class="lbar">
+        <div class="ll"><span>Layer ${i+1} — ${layerNames[i]}</span><span>avg ${avg}%</span></div>
+        <div class="bt"><div class="bf" style="width:${avg}%;background:${layerColor(avg)};"></div></div>
+      </div>`).join('')
+    : '<div style="font-size:11px;color:var(--text-muted);">No data yet</div>';
+}
+
+// ── Dropdowns ──────────────────────────────────────────────────
+function populateClientDropdowns() {
+  const selects = ['call-client','book-client','plan-client'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const current = el.value;
+    el.innerHTML = '<option value="">Select client...</option>' +
+      allClients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    if (current) el.value = current;
+  });
+}
+
+// ── Add client modal (simple inline) ──────────────────────────
+function showAddClient() {
+  const name = prompt('Client full name:');
+  if (!name) return;
+  const email = prompt('Email address:');
+  const whatsapp = prompt('WhatsApp number:');
+  const gender = prompt('Gender (Male/Female/Other):');
+  const age = prompt('Age range (e.g. 25-34):');
+  addClient({ name, email, whatsapp, gender, age_range: age, status: 'active', start_date: new Date().toISOString().split('T')[0] });
+}
+
+async function addClient(data) {
+  const result = await db('/rest/v1/clients', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+  if (result) {
+    showToast(`${data.name} added as client`);
+    loadClients();
+  }
+}
+
+// ── Sign out ───────────────────────────────────────────────────
+function signOut() {
+  localStorage.removeItem('sb_access_token');
+  localStorage.removeItem('sb_refresh_token');
+  window.location.href = 'index.html';
+}
+
+// ── Init ───────────────────────────────────────────────────────
+async function init() {
+  document.getElementById('topbar-title').textContent = getGreeting();
+  await loadClients();
+  await loadOverview();
+}
+
+init();
+</script>
+</body>
+</html>
