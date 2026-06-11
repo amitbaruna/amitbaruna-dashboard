@@ -1012,9 +1012,10 @@ async function openClientProfile(id) {
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
   document.getElementById('profile-layers').innerHTML = layerKeys.map((k, i) => {
     const val = client[k] || 0;
+    const pct = Math.round((val / 20) * 100);
     return `<div class="lbar">
-      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
-      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}/20</span></div>
+      <div class="bt"><div class="bf" style="width:${pct}%;background:${layerColor(pct)};"></div></div>
     </div>`;
   }).join('');
 
@@ -1175,9 +1176,10 @@ async function openLeadProfile(id) {
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
   document.getElementById('lp-layers').innerHTML = layerKeys.map((k, i) => {
     const val = lead[k] || 0;
+    const pct = Math.round((val / 20) * 100);
     return `<div class="lbar">
-      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
-      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}/20</span></div>
+      <div class="bt"><div class="bf" style="width:${pct}%;background:${layerColor(pct)};"></div></div>
     </div>`;
   }).join('');
 
