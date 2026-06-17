@@ -282,6 +282,118 @@ select.form-input{cursor:pointer;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:4px;}
+
+/* ── Command Center ──────────────────────────────────────────── */
+.cc-section{margin-bottom:14px;}
+.cc-section-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.cc-section-sub{font-size:10px;color:var(--text-muted);}
+.cc-label{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 9px;border-radius:4px;}
+.cc-label i{font-size:12px;}
+.cc-label-red{background:var(--danger-bg);color:var(--danger-text);}
+.cc-label-blue{background:var(--info-bg);color:var(--info-text);}
+.cc-label-green{background:var(--success-bg);color:var(--success-text);}
+.cc-label-amber{background:var(--warning-bg);color:var(--warning-text);}
+.cc-label-purple{background:var(--purple-bg);color:var(--purple-text);}
+.cc-label-gray{background:#F1EFE8;color:#5F5E5A;}
+.cc-label-teal{background:#E1F5EE;color:#0F6E56;}
+
+/* Attention queue row */
+.aq-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.aq-row:last-child{border-bottom:none;}
+.aq-row:hover{background:#F9F9F9;margin:0 -4px;padding:10px 4px;border-radius:6px;}
+.aq-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.aq-tag{font-size:10px;font-weight:500;padding:3px 8px;border-radius:12px;margin-left:auto;flex-shrink:0;white-space:nowrap;}
+.aq-tag-call{background:var(--danger-bg);color:var(--danger-text);}
+.aq-tag-followup{background:var(--warning-bg);color:var(--warning-text);}
+.aq-tag-new{background:var(--info-bg);color:var(--info-text);}
+
+/* Stat grid for command center */
+.cc-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+.cc-stat{background:var(--bg);border-radius:var(--radius);padding:10px 12px;text-align:center;}
+.cc-stat-val{font-size:22px;font-weight:600;color:var(--text-primary);line-height:1;}
+.cc-stat-lbl{font-size:10px;color:var(--text-muted);margin-top:3px;}
+.cc-pop-meta{font-size:11px;color:var(--text-secondary);line-height:1.7;}
+
+/* Pattern dist rows for CC */
+.cc-pat-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);}
+.cc-pat-row:last-child{border-bottom:none;}
+.cc-pat-name{font-size:11px;color:var(--text-secondary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cc-pat-bar-wrap{width:60px;flex-shrink:0;}
+.cc-pat-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.cc-pat-fill{height:100%;border-radius:3px;}
+.cc-pat-pct{font-size:11px;font-weight:600;color:var(--text-primary);width:32px;text-align:right;flex-shrink:0;}
+
+/* Layer dist for CC */
+.cc-layer-row{margin-bottom:8px;}
+.cc-layer-row:last-child{margin-bottom:0;}
+.cc-layer-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;}
+.cc-layer-name{color:var(--text-secondary);}
+.cc-layer-pct{font-weight:600;}
+
+/* Hot leads list */
+.hl-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.hl-row:last-child{border-bottom:none;}
+.hl-row:hover{background:#F9F9F9;margin:0 -4px;padding:8px 4px;border-radius:6px;}
+.hl-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
+
+/* Coach insight */
+.cc-insight-loading{text-align:center;padding:20px;color:var(--text-muted);font-size:12px;}
+.cc-spin{animation:spin 1.2s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.cc-insight-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:8px;margin-bottom:6px;font-size:12px;line-height:1.5;}
+.cc-insight-item:last-child{margin-bottom:0;}
+.cc-insight-item i{font-size:13px;flex-shrink:0;margin-top:1px;}
+.cc-insight-warn{background:var(--danger-bg);color:var(--danger-text);}
+.cc-insight-pos{background:var(--success-bg);color:var(--success-text);}
+.cc-insight-info{background:var(--info-bg);color:var(--info-text);}
+.cc-insight-box{padding:9px 12px;border-radius:8px;font-size:11px;line-height:1.6;}
+.cc-insight-blue{background:var(--info-bg);color:var(--info-text);}
+.cc-refresh-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;padding:4px;margin-top:6px;transition:color 0.2s;}
+.cc-refresh-btn:hover{color:var(--accent);}
+
+/* Validation screen */
+.vl-progress-track{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:4px;}
+.vl-progress-fill{height:100%;background:var(--purple-text);border-radius:4px;transition:width .6s ease;}
+.vl-progress-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px;}
+.vl-sub{font-size:11px;color:var(--text-muted);font-weight:500;}
+.vl-acc-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);}
+.vl-acc-row:last-child{border-bottom:none;}
+.vl-acc-name{font-size:11px;color:var(--text-secondary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vl-acc-bar{width:50px;flex-shrink:0;}
+.vl-acc-pill{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:500;flex-shrink:0;}
+.vl-pill-green{background:var(--success-bg);color:var(--success-text);}
+.vl-pill-amber{background:var(--warning-bg);color:var(--warning-text);}
+.vl-pill-red{background:var(--danger-bg);color:var(--danger-text);}
+.vl-conf-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;}
+.vl-conf-row:last-child{border-bottom:none;}
+.vl-conf-label{color:var(--text-secondary);flex:1;}
+.vl-conf-bar{width:40px;}
+.vl-conf-cnt{font-weight:500;color:var(--text-primary);width:20px;text-align:right;}
+.vl-combo-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;}
+.vl-combo-row:last-child{border-bottom:none;}
+.vl-combo-name{color:var(--text-secondary);flex:1;}
+.vl-combo-cnt{font-weight:600;color:var(--danger-text);}
+
+/* Funnel */
+.vl-funnel-step{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:5px;}
+.vl-funnel-n{font-size:18px;font-weight:600;min-width:28px;}
+.vl-funnel-label{font-size:11px;color:var(--text-secondary);flex:1;}
+.vl-funnel-bar-wrap{width:60px;}
+.vl-funnel-pct{font-size:11px;font-weight:500;min-width:36px;text-align:right;}
+.vl-funnel-note{font-size:10px;color:var(--text-muted);margin-top:4px;padding-left:4px;}
+
+/* Outcome rows */
+.vl-oc-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;}
+.vl-oc-row:last-child{border-bottom:none;}
+.vl-oc-name{color:var(--text-secondary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vl-oc-bar{width:44px;flex-shrink:0;}
+
+/* Topbar alert pill */
+.topbar-alert{display:flex;align-items:center;gap:5px;background:var(--danger-bg);border:0.5px solid #F5C4B3;border-radius:20px;font-size:11px;color:var(--danger-text);padding:3px 10px;cursor:pointer;}
+
+/* 5-stat grid for validation */
+.cc-stat-grid-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
@@ -298,7 +410,7 @@ select.form-input{cursor:pointer;}
     </div>
 
     <div class="nav-item active" data-screen="overview">
-      <i class="ti ti-layout-dashboard"></i> Overview
+      <i class="ti ti-brain"></i> Command Center
     </div>
 
     <div class="nav-section">Clients</div>
@@ -309,20 +421,23 @@ select.form-input{cursor:pointer;}
       <i class="ti ti-user-plus"></i> Leads
     </div>
 
-    <div class="nav-section">CRM</div>
+    <div class="nav-section">Intelligence</div>
+    <div class="nav-item" data-screen="analytics">
+      <i class="ti ti-chart-dots"></i> Analytics
+    </div>
+    <div class="nav-item" data-screen="validation">
+      <i class="ti ti-flask"></i> Validation
+    </div>
+
+    <div class="nav-section">Operations</div>
     <div class="nav-item" data-screen="calllogs">
       <i class="ti ti-phone"></i> Call logs
     </div>
     <div class="nav-item" data-screen="bookings">
       <i class="ti ti-calendar"></i> Bookings
     </div>
-
-    <div class="nav-section">Content</div>
     <div class="nav-item" data-screen="plans">
       <i class="ti ti-clipboard-list"></i> Plans
-    </div>
-    <div class="nav-item" data-screen="analytics">
-      <i class="ti ti-chart-bar"></i> Analytics
     </div>
 
     <div class="sidebar-footer">
@@ -344,51 +459,90 @@ select.form-input{cursor:pointer;}
 
     <div class="content">
 
-      <!-- OVERVIEW -->
+      <!-- COMMAND CENTER -->
       <div class="screen active" id="screen-overview">
-        <div class="stat-grid">
-          <div class="stat-card" onclick="goScreen('clients')">
-            <div class="stat-label">Active clients</div>
-            <div class="stat-value" id="ov-clients">—</div>
-            <div class="stat-sub"><span class="sdot" style="background:#639922;"></span><span id="ov-glp">Loading...</span></div>
+
+        <!-- ① Attention Queue -->
+        <div class="cc-section">
+          <div class="cc-section-header">
+            <span class="cc-label cc-label-red"><i class="ti ti-bell-ringing"></i> Attention Queue</span>
+            <span class="cc-section-sub">Leads needing action today — no contact in 6+ days, follow-ups due, new uncontacted</span>
           </div>
-          <div class="stat-card" onclick="goScreen('leads')">
-            <div class="stat-label">New leads</div>
-            <div class="stat-value" id="ov-leads">—</div>
-            <div class="stat-sub"><span class="sdot" style="background:var(--accent);"></span>This week</div>
-          </div>
-          <div class="stat-card" onclick="goScreen('bookings')">
-            <div class="stat-label">Calls today</div>
-            <div class="stat-value" id="ov-calls">—</div>
-            <div class="stat-sub"><span class="sdot" style="background:#378ADD;"></span>Scheduled</div>
-          </div>
-          <div class="stat-card" onclick="goScreen('leads')">
-            <div class="stat-label">Quiz completions</div>
-            <div class="stat-value" id="ov-quiz">—</div>
-            <div class="stat-sub"><span class="sdot" style="background:#888;"></span>Last 30 days</div>
+          <div class="card" style="margin-bottom:14px;">
+            <div id="ov-attention-queue">
+              <div class="empty" style="padding:20px;"><i class="ti ti-check"></i>All caught up</div>
+            </div>
           </div>
         </div>
 
+        <!-- ② Population Snapshot + ③ Pattern Distribution -->
         <div class="two-col">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Recent leads</div>
-              <span class="card-action" onclick="goScreen('leads')">View all →</span>
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-blue"><i class="ti ti-users"></i> Population Snapshot</span>
             </div>
-            <div id="ov-leads-list">
-              <div class="empty"><i class="ti ti-user-plus"></i>No leads yet</div>
+            <div class="card">
+              <div class="cc-stat-grid">
+                <div class="cc-stat"><div class="cc-stat-val" id="ov-total-assessments">—</div><div class="cc-stat-lbl">Assessments</div></div>
+                <div class="cc-stat"><div class="cc-stat-val" id="ov-avg-score">—</div><div class="cc-stat-lbl">Avg score</div></div>
+                <div class="cc-stat"><div class="cc-stat-val" id="ov-avg-conf">—</div><div class="cc-stat-lbl">Avg confidence</div></div>
+                <div class="cc-stat"><div class="cc-stat-val" id="ov-hot-leads">—</div><div class="cc-stat-lbl">Hot leads</div></div>
+              </div>
+              <div class="cc-pop-meta" id="ov-pop-meta"></div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Recent call logs</div>
-              <span class="card-action" onclick="goScreen('calllogs')">View all →</span>
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-purple"><i class="ti ti-chart-dots"></i> Pattern Distribution</span>
+              <span class="cc-section-sub">Top patterns in your population</span>
             </div>
-            <div id="ov-calls-list">
-              <div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>
+            <div class="card">
+              <div id="ov-pattern-dist">
+                <div class="empty" style="padding:20px;font-size:12px;">No pattern data yet</div>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- ④ Weakest Layer + ⑤ Hot Lead Intelligence + ⑥ Coach Insight -->
+        <div class="three-col">
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-amber"><i class="ti ti-layers-intersect"></i> Weakest Layer</span>
+              <span class="cc-section-sub">Population avg — scored leads only</span>
+            </div>
+            <div class="card">
+              <div id="ov-layer-dist">
+                <div class="empty" style="padding:20px;font-size:12px;">No layer data yet</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-red"><i class="ti ti-flame"></i> Hot Lead Intelligence</span>
+              <span class="cc-section-sub">2+ flags · highest scores</span>
+            </div>
+            <div class="card">
+              <div id="ov-hot-list">
+                <div class="empty" style="padding:20px;font-size:12px;">No hot leads yet</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-green"><i class="ti ti-brain"></i> Coach Insight</span>
+              <span class="cc-section-sub" id="ov-insight-time"></span>
+            </div>
+            <div class="card" id="ov-insight-card">
+              <div class="cc-insight-loading" id="ov-insight-loading">
+                <i class="ti ti-loader cc-spin"></i> Generating insight...
+              </div>
+              <div id="ov-insight-content" style="display:none;"></div>
+              <button class="cc-refresh-btn" onclick="loadCoachInsight()" title="Refresh insight"><i class="ti ti-refresh"></i></button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ALL CLIENTS -->
@@ -700,6 +854,136 @@ select.form-input{cursor:pointer;}
         </div>
       </div>
 
+      <!-- VALIDATION DASHBOARD -->
+      <div class="screen" id="screen-validation">
+
+        <!-- Header bar -->
+        <div class="cc-section-header" style="margin-bottom:14px;">
+          <span class="cc-label cc-label-purple"><i class="ti ti-flask"></i> Assessment Validation — Engine Refinement</span>
+          <span class="cc-section-sub">First 100 assessments · Pattern accuracy + outcome tracking</span>
+        </div>
+
+        <!-- Progress tracker -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="cc-stat-grid-5" style="margin-bottom:14px;">
+            <div class="cc-stat"><div class="cc-stat-val" id="vl-total">—</div><div class="cc-stat-lbl">Assessments</div></div>
+            <div class="cc-stat"><div class="cc-stat-val" id="vl-pattern-engine">—</div><div class="cc-stat-lbl">Pattern Engine</div></div>
+            <div class="cc-stat"><div class="cc-stat-val" id="vl-high-conf">—</div><div class="cc-stat-lbl">High Confidence</div></div>
+            <div class="cc-stat"><div class="cc-stat-val" id="vl-booked">—</div><div class="cc-stat-lbl">Calls Booked</div></div>
+            <div class="cc-stat"><div class="cc-stat-val" id="vl-converted">—</div><div class="cc-stat-lbl">Converted</div></div>
+          </div>
+          <div class="vl-progress-track">
+            <div class="vl-progress-fill" id="vl-progress-fill"></div>
+          </div>
+          <div class="vl-progress-labels">
+            <span>0</span>
+            <span id="vl-progress-label" style="color:var(--purple-text);font-weight:500;">37 / 100 assessments</span>
+            <span>100</span>
+          </div>
+        </div>
+
+        <!-- Pattern accuracy + Layer recognition -->
+        <div class="two-col">
+          <div>
+            <div class="cc-section-header"><span class="cc-label cc-label-purple">Pattern Accuracy — Narrative Recognition</span></div>
+            <div class="card">
+              <div class="vl-sub" style="margin-bottom:8px;">% of leads who recognised their pattern (self-reported)</div>
+              <div id="vl-pattern-accuracy">
+                <div class="empty" style="padding:16px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cc-section-header"><span class="cc-label cc-label-teal">Layer Recognition — Which Layers Resonate</span></div>
+            <div class="card">
+              <div class="vl-sub" style="margin-bottom:8px;">Recognition rate by dominant layer</div>
+              <div id="vl-layer-recognition">
+                <div class="empty" style="padding:16px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confidence distribution + Hidden index combos + Emerging insights -->
+        <div class="three-col">
+          <div>
+            <div class="cc-section-header"><span class="cc-label cc-label-gray">Confidence Distribution</span></div>
+            <div class="card">
+              <div id="vl-conf-dist">
+                <div class="empty" style="padding:16px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cc-section-header"><span class="cc-label cc-label-blue">Most Common Index Combinations</span></div>
+            <div class="card">
+              <div class="vl-sub" style="margin-bottom:8px;">Hidden intelligence patterns appearing most</div>
+              <div id="vl-index-combos">
+                <div class="empty" style="padding:16px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-green"><i class="ti ti-brain"></i> Emerging Insights</span>
+              <span class="cc-section-sub">Claude API · updates on load</span>
+            </div>
+            <div class="card" id="vl-insight-card">
+              <div class="cc-insight-loading" id="vl-insight-loading">
+                <i class="ti ti-loader cc-spin"></i> Analysing patterns...
+              </div>
+              <div id="vl-insight-content" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OUTCOME INTELLIGENCE -->
+        <div class="cc-section-header" style="margin-top:4px;margin-bottom:10px;">
+          <span class="cc-label cc-label-red"><i class="ti ti-target"></i> Outcome Intelligence — Diagnostic Accuracy → Business Outcomes</span>
+        </div>
+
+        <div class="card" style="margin-bottom:14px;">
+          <!-- Funnel + Pattern conversion -->
+          <div class="two-col" style="margin-bottom:0;">
+            <div>
+              <div class="vl-sub" style="margin-bottom:12px;">Conversion funnel — all assessments</div>
+              <div id="vl-funnel">
+                <div class="empty" style="padding:16px;font-size:12px;">No funnel data yet</div>
+              </div>
+            </div>
+            <div>
+              <div class="vl-sub" style="margin-bottom:12px;">Conversion rate by dominant pattern</div>
+              <div id="vl-conv-by-pattern">
+                <div class="empty" style="padding:16px;font-size:12px;">No data yet</div>
+              </div>
+              <div class="divider"></div>
+              <div class="vl-sub" style="margin-bottom:8px;">Conversion by dominant layer</div>
+              <div id="vl-conv-by-layer">
+                <div class="empty" style="padding:10px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <!-- Index combo + Narrative resonance -->
+          <div class="two-col" style="margin-bottom:0;">
+            <div>
+              <div class="vl-sub" style="margin-bottom:8px;">Conversion by hidden index combination</div>
+              <div id="vl-conv-by-combo">
+                <div class="empty" style="padding:12px;font-size:12px;">No data yet</div>
+              </div>
+            </div>
+            <div>
+              <div class="vl-sub" style="margin-bottom:8px;">Conversion by narrative resonance score</div>
+              <div id="vl-conv-by-narrative">
+                <div class="empty" style="padding:12px;font-size:12px;">No data yet</div>
+              </div>
+              <div id="vl-narrative-insight" style="display:none;margin-top:10px;" class="cc-insight-box cc-insight-blue"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
       <!-- CLIENT PROFILE -->
       <div class="screen" id="screen-profile">
         <div class="back-btn" id="profile-back" onclick="goBack()">
@@ -769,6 +1053,10 @@ select.form-input{cursor:pointer;}
           </div>
           <div class="card">
             <div class="card-header"><div class="card-title">Lead status</div></div>
+            <div id="lp-pattern-brief" style="display:none;margin-bottom:14px;padding:10px 12px;background:var(--danger-bg);border-radius:var(--radius);border:0.5px solid #F5C4B3;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--danger-text);margin-bottom:5px;">Pattern Intelligence</div>
+              <div id="lp-pattern-brief-content" style="font-size:12px;color:var(--danger-text);line-height:1.5;"></div>
+            </div>
             <div class="form-field">
               <label class="form-label">Update status</label>
               <select class="form-input" id="lp-status-select">
@@ -822,6 +1110,7 @@ select.form-input{cursor:pointer;}
 // ── Config ────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://hcksvwxbjcehfxbfgqdo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_8P0solsUeueG2VXNWSoujg_UuTImaJH';
+const WORKER_URL = 'https://ab-coach-proxy.amit-baruna.workers.dev';
 
 // ── State ─────────────────────────────────────────────────────
 let currentScreen = 'overview';
@@ -870,13 +1159,14 @@ function goScreen(name) {
   const navItem = document.querySelector(`[data-screen="${name}"]`);
   if (navItem) navItem.classList.add('active');
   const titles = {
-    overview: getGreeting(),
+    overview: 'Metabolic Intelligence Command Center',
     clients: 'All clients',
     leads: 'Leads',
     calllogs: 'Call logs',
     bookings: 'Bookings',
     plans: 'Plans',
     analytics: 'Analytics',
+    validation: 'Assessment Validation',
     profile: '',
     'lead-profile': ''
   };
@@ -903,6 +1193,7 @@ function loadScreen(name) {
   if (name === 'bookings') loadBookings();
   if (name === 'plans') loadPlans();
   if (name === 'analytics') loadAnalytics();
+  if (name === 'validation') loadValidation();
 }
 
 function getGreeting() {
@@ -963,77 +1254,235 @@ function daysLeft(expiry) {
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 
-// ── Overview ───────────────────────────────────────────────────
+// ── Command Center (Overview) ──────────────────────────────────
 async function loadOverview() {
-  const [clients, leads, calls, bookings] = await Promise.all([
-    db('/rest/v1/clients?select=*&status=eq.active'),
-    db('/rest/v1/leads?select=*&order=created_at.desc&limit=50'),
-    db('/rest/v1/call_logs?select=*&order=created_at.desc&limit=4'),
-    db('/rest/v1/booking?select=*&order=booking_date.asc')
-  ]);
-
-  const activeClients = clients || [];
+  const leads = await db('/rest/v1/leads?select=*&order=created_at.desc');
   const allLeadsData = leads || [];
-  const recentCalls = calls || [];
-
-  const glpCount = activeClients.filter(c => c.notes && c.notes.toLowerCase().includes('glp')).length;
-  document.getElementById('ov-clients').textContent = activeClients.length;
-  document.getElementById('ov-glp').textContent = glpCount ? `${glpCount} on GLP-1` : 'All active';
-
   const now = new Date();
-  const weekAgo = new Date(now - 7 * 86400000);
-  const newLeads = allLeadsData.filter(l => new Date(l.created_at) > weekAgo);
-  document.getElementById('ov-leads').textContent = newLeads.length;
+  const sixDaysAgo = new Date(now - 6 * 86400000);
 
-  const today = now.toISOString().split('T')[0];
-  const todayCalls = (bookings || []).filter(b => b.booking_date === today);
-  document.getElementById('ov-calls').textContent = todayCalls.length;
-  document.getElementById('ov-quiz').textContent = allLeadsData.length;
+  // ① Attention Queue
+  const attentionLeads = allLeadsData.filter(l => {
+    if (l.status === 'converted' || l.status === 'dead') return false;
+    const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+    const daysSinceContact = l.last_contacted_at
+      ? Math.floor((now - new Date(l.last_contacted_at)) / 86400000)
+      : Math.floor((now - new Date(l.created_at)) / 86400000);
+    const isFollowup = l.status === 'followup';
+    const isNew = l.status === 'new' || !l.status;
+    const noContact = daysSinceContact >= 6;
+    return noContact || isFollowup || isNew;
+  }).slice(0, 8);
 
-  // Recent leads list
-  const leadsList = document.getElementById('ov-leads-list');
-  if (allLeadsData.length === 0) {
-    leadsList.innerHTML = '<div class="empty"><i class="ti ti-user-plus"></i>No leads yet</div>';
+  const queueEl = document.getElementById('ov-attention-queue');
+  if (attentionLeads.length === 0) {
+    queueEl.innerHTML = '<div class="empty" style="padding:20px;"><i class="ti ti-check"></i>All caught up</div>';
   } else {
-    leadsList.innerHTML = allLeadsData.slice(0, 5).map(l => {
+    // Update topbar alert (clear old first)
+    const existingAlert = document.querySelector('.topbar-alert');
+    if (existingAlert) existingAlert.remove();
+    const alertHtml = `<div class="topbar-alert" onclick="goScreen('overview')"><i class="ti ti-bell-ringing" style="font-size:13px;"></i>${attentionLeads.length} need attention</div>`;
+    document.querySelector('.topbar-right').insertAdjacentHTML('afterbegin', alertHtml);
+
+    queueEl.innerHTML = attentionLeads.map(l => {
       const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
-      const isHot = flags.length >= 2;
-      const hasCal = l.notes && l.notes.includes('calendly');
-      const patternHtml = l.dominant_pattern
-        ? `<span class="pattern-badge ${getPatternMeta(l.dominant_pattern).cls}" style="font-size:9px;padding:2px 6px;">${getPatternMeta(l.dominant_pattern).short}</span>`
-        : '';
-      return `<div class="row" onclick="openLeadProfile(${l.id})">
+      const daysSince = l.last_contacted_at
+        ? Math.floor((now - new Date(l.last_contacted_at)) / 86400000)
+        : Math.floor((now - new Date(l.created_at)) / 86400000);
+      const isNew = l.status === 'new' || !l.status;
+      const isFollowup = l.status === 'followup';
+      let tagClass = 'aq-tag-call', tagLabel = 'Call now';
+      if (isFollowup) { tagClass = 'aq-tag-followup'; tagLabel = 'Follow up'; }
+      if (isNew && daysSince < 2) { tagClass = 'aq-tag-new'; tagLabel = 'New lead'; }
+      const patternStr = l.dominant_pattern ? `${getPatternMeta(l.dominant_pattern).short}` : 'No pattern';
+      const confStr = l.dominant_pattern_confidence ? ` · ${l.dominant_pattern_confidence}% conf` : '';
+      const flagStr = flags.length ? ` · ${flags.slice(0,2).join(', ')}` : '';
+      const contactStr = daysSince >= 6 ? ` · ${daysSince}d no contact` : '';
+      return `<div class="aq-row" onclick="openLeadProfile(${l.id})">
         <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="rname">${l.name || '—'}</div>
-          <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.slice(0,2).join(', ') || 'No flags'}</div>
-          ${patternHtml}
+          <div class="aq-meta">${patternStr}${confStr}${flagStr}${contactStr}</div>
         </div>
-        <div class="badges">
-          ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
-          ${statusBadge(l.status || 'new')}
-          ${hasCal ? '<span class="badge b-cal">📅 Calendly</span>' : ''}
-        </div>
+        <span class="aq-tag ${tagClass}">${tagLabel}</span>
       </div>`;
     }).join('');
   }
 
-  // Recent calls
-  const callsList = document.getElementById('ov-calls-list');
-  if (recentCalls.length === 0) {
-    callsList.innerHTML = '<div class="empty"><i class="ti ti-phone"></i>No calls logged yet</div>';
+  // ② Population Snapshot
+  const scoredLeads = allLeadsData.filter(l => l.metabolic_score != null);
+  const confLeads = allLeadsData.filter(l => l.dominant_pattern_confidence != null);
+  const hotLeads = allLeadsData.filter(l => {
+    const f = l.flags ? l.flags.split(',').filter(Boolean).length : 0;
+    return f >= 2;
+  });
+  const avgScore = scoredLeads.length
+    ? Math.round(scoredLeads.reduce((s, l) => s + l.metabolic_score, 0) / scoredLeads.length) : 0;
+  const avgConf = confLeads.length
+    ? Math.round(confLeads.reduce((s, l) => s + l.dominant_pattern_confidence, 0) / confLeads.length) : 0;
+
+  document.getElementById('ov-total-assessments').textContent = allLeadsData.length;
+  document.getElementById('ov-avg-score').textContent = avgScore || '—';
+  document.getElementById('ov-avg-conf').textContent = avgConf ? avgConf + '%' : '—';
+  document.getElementById('ov-hot-leads').textContent = hotLeads.length;
+
+  const females = allLeadsData.filter(l => l.gender && l.gender.toLowerCase().startsWith('f')).length;
+  const femalePct = allLeadsData.length ? Math.round((females / allLeadsData.length) * 100) : 0;
+  const weekAgo = new Date(now - 7 * 86400000);
+  const newThisWeek = allLeadsData.filter(l => new Date(l.created_at) > weekAgo).length;
+  const converted = allLeadsData.filter(l => l.status === 'converted').length;
+  document.getElementById('ov-pop-meta').innerHTML =
+    `F ${femalePct}% · <span style="color:var(--accent);font-weight:500;">↑ ${newThisWeek} new</span> this week · ${converted} converted`;
+
+  // ③ Pattern Distribution
+  const patternCounts = {};
+  allLeadsData.forEach(l => {
+    if (l.dominant_pattern) {
+      patternCounts[l.dominant_pattern] = (patternCounts[l.dominant_pattern] || 0) + 1;
+    }
+  });
+  const sortedPatterns = Object.entries(patternCounts).sort((a, b) => b[1] - a[1]);
+  const patternColors = ['#CC2200','#EA580C','#4F46E5','#0891B2','#CA8A04','#16A34A','#9333EA','#64748B','#854F0B'];
+  const patDistEl = document.getElementById('ov-pattern-dist');
+  if (sortedPatterns.length === 0) {
+    patDistEl.innerHTML = '<div class="empty" style="padding:16px;font-size:12px;">No pattern data yet</div>';
   } else {
-    callsList.innerHTML = recentCalls.map(c => {
-      const client = activeClients.find(cl => cl.id === c.client_id);
-      return `<div class="row">
-        <div class="cdot"></div>
-        <div>
-          <div class="rname">${client ? client.name : 'Unknown client'}</div>
-          <div class="rmeta">${c.notes ? c.notes.slice(0, 60) + (c.notes.length > 60 ? '...' : '') : 'No notes'}</div>
-        </div>
-        <div class="ctime">${formatDate(c.call_date)}</div>
+    const maxCount = sortedPatterns[0][1];
+    const totalPat = allLeadsData.filter(l => l.dominant_pattern).length;
+    patDistEl.innerHTML = sortedPatterns.slice(0, 6).map(([name, count], i) => {
+      const pct = Math.round((count / totalPat) * 100);
+      const barW = Math.round((count / maxCount) * 100);
+      const m = getPatternMeta(name);
+      return `<div class="cc-pat-row">
+        <span class="cc-pat-name">${m.short}</span>
+        <div class="cc-pat-bar-wrap"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${barW}%;background:${patternColors[i % patternColors.length]};"></div></div></div>
+        <span class="cc-pat-pct">${pct}%</span>
       </div>`;
     }).join('');
+  }
+
+  // ④ Weakest Layer Distribution
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  const layerAvgs = layerKeys.map(k => {
+    const vals = allLeadsData.filter(l => l[k] != null).map(l => l[k]);
+    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+  });
+  const layerEl = document.getElementById('ov-layer-dist');
+  if (layerAvgs.every(v => v === null)) {
+    layerEl.innerHTML = '<div class="empty" style="padding:16px;font-size:12px;">No layer data yet</div>';
+  } else {
+    layerEl.innerHTML = layerNames.map((name, i) => {
+      const pct = layerAvgs[i];
+      if (pct === null) return '';
+      const color = layerColor(pct);
+      return `<div class="cc-layer-row">
+        <div class="cc-layer-top">
+          <span class="cc-layer-name">L${i+1} ${name}</span>
+          <span class="cc-layer-pct" style="color:${color};">${pct}%</span>
+        </div>
+        <div class="bt"><div class="bf" style="width:${pct}%;background:${color};"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // ⑤ Hot Lead Intelligence
+  const hotSorted = hotLeads.sort((a, b) => (b.metabolic_score || 0) - (a.metabolic_score || 0));
+  const hotEl = document.getElementById('ov-hot-list');
+  if (hotSorted.length === 0) {
+    hotEl.innerHTML = '<div class="empty" style="padding:16px;font-size:12px;">No hot leads yet</div>';
+  } else {
+    hotEl.innerHTML = hotSorted.slice(0, 5).map(l => {
+      const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
+      const patternStr = l.dominant_pattern ? getPatternMeta(l.dominant_pattern).short : 'No pattern';
+      return `<div class="hl-row" onclick="openLeadProfile(${l.id})">
+        <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="rname">${l.name || '—'}</div>
+          <div class="hl-meta">${patternStr} · Score ${l.metabolic_score || '?'}</div>
+        </div>
+        <span class="badge b-hot">${flags.length} flags</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ⑥ Coach Insight — Claude API
+  await loadCoachInsight(allLeadsData);
+}
+
+// ── Claude API — Coach Insight ──────────────────────────────────
+async function loadCoachInsight(leadsData) {
+  const loadEl = document.getElementById('ov-insight-loading');
+  const contentEl = document.getElementById('ov-insight-content');
+  if (!loadEl || !contentEl) return;
+
+  loadEl.style.display = 'block';
+  contentEl.style.display = 'none';
+
+  const leads = leadsData || allLeads;
+  if (!leads || leads.length === 0) {
+    loadEl.innerHTML = '<span style="font-size:12px;">No assessment data yet.</span>';
+    return;
+  }
+
+  // Build a compact data summary for Claude
+  const patternCounts = {};
+  leads.forEach(l => { if (l.dominant_pattern) patternCounts[l.dominant_pattern] = (patternCounts[l.dominant_pattern] || 0) + 1; });
+  const topPattern = Object.entries(patternCounts).sort((a,b)=>b[1]-a[1])[0];
+  const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerAvgs = layerKeys.map((k,i) => {
+    const vals = leads.filter(l => l[k] != null).map(l => l[k]);
+    return { name: layerNames[i], avg: vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : null };
+  }).filter(l => l.avg !== null);
+  const weakestLayer = layerAvgs.sort((a,b)=>a.avg-b.avg)[0];
+  const hotCount = leads.filter(l => { const f = l.flags ? l.flags.split(',').filter(Boolean).length : 0; return f >= 2; }).length;
+  const totalLeads = leads.length;
+  const converted = leads.filter(l => l.status === 'converted').length;
+  const followups = leads.filter(l => l.status === 'followup').length;
+
+  const prompt = `You are a clinical coach intelligence assistant for Amit Baruna, a Metabolic Diagnostic & GLP-1 specialist coach.
+
+Here is today's population data:
+- Total assessments: ${totalLeads}
+- Top pattern: ${topPattern ? topPattern[0] + ' (' + topPattern[1] + ' leads)' : 'None yet'}
+- Weakest population layer: ${weakestLayer ? weakestLayer.name + ' at ' + weakestLayer.avg + '%' : 'Unknown'}
+- Hot leads (2+ flags): ${hotCount}
+- Follow-ups pending: ${followups}
+- Conversions: ${converted}
+
+Generate exactly 3 short coaching insights (1-2 sentences each). Each should be actionable, specific to this data, and help Amit decide what to do TODAY. Format as JSON array with fields: type (warn/positive/info), text (the insight). No preamble. JSON only.`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const insights = JSON.parse(clean);
+
+    const iconMap = { warn: 'ti-alert-triangle', positive: 'ti-trending-up', info: 'ti-bulb' };
+    const classMap = { warn: 'cc-insight-warn', positive: 'cc-insight-pos', info: 'cc-insight-info' };
+
+    contentEl.innerHTML = insights.map(ins => `
+      <div class="cc-insight-item ${classMap[ins.type] || 'cc-insight-info'}">
+        <i class="ti ${iconMap[ins.type] || 'ti-bulb'}"></i>
+        <span>${ins.text}</span>
+      </div>`).join('');
+
+    document.getElementById('ov-insight-time').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+    loadEl.style.display = 'none';
+    contentEl.style.display = 'block';
+  } catch (e) {
+    loadEl.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">Insight unavailable — check API key</span>';
+    console.error('Claude API error:', e);
   }
 }
 
@@ -1357,6 +1806,36 @@ async function openLeadProfile(id) {
 
   document.getElementById('lp-status-select').value = lead.status || 'new';
   document.getElementById('lp-notes').value = lead.notes && !lead.notes.toLowerCase().includes('calendly') ? lead.notes : '';
+
+  // ── Pattern Brief in status panel
+  const patternBriefs = {
+    'Metabolic Resistance Pattern': 'This person's metabolism has adapted defensively — weight loss attempts have likely stalled or reversed. Lead with insulin sensitivity and cortisol dysregulation. Avoid caloric restriction framing.',
+    'Cortisol Dominant': 'High cortisol is driving fat storage and suppressing recovery. This person is likely high-functioning but exhausted. Lead with nervous system, not willpower.',
+    'Gut-Brain Disconnect': 'Gut signals are not reaching the brain accurately — hunger, fullness, and mood cues are disrupted. Microbiome and vagal nerve tone are key entry points.',
+    'Circadian Disruption Pattern': 'Sleep-wake disruption is upstream of most symptoms. Metabolic, hormonal, and cognitive function are all impacted. Circadian anchoring is the first intervention.',
+    'System-Wide Adaptation Deficit': 'Multiple systems are under load simultaneously — this person cannot adapt fast enough. Protocol must sequence: stabilise, then optimise.',
+    'Recovery Deficit': 'Recovery capacity is the bottleneck. Training harder or eating less will worsen outcomes. Parasympathetic restoration is the priority.',
+    'Nervous System Overload': 'The nervous system is in chronic sympathetic dominance. Standard protocols will not work until this is addressed. Lead with regulation, not performance.',
+    'Fuel Regulation Bottleneck': 'Glucose and fat switching is impaired — this person runs on glucose and cannot access fat stores efficiently. Metabolic flexibility is the core intervention.',
+    'Behavioral Recovery Gap': 'There is a gap between what this person knows and what they can sustain behaviourally. The protocol must account for nervous system state, not just information.',
+    'Single System Bottleneck': 'One primary system is driving dysfunction. Targeted intervention here can produce rapid improvement. Identify and address the bottleneck directly.'
+  };
+  const briefEl = document.getElementById('lp-pattern-brief');
+  const briefContent = document.getElementById('lp-pattern-brief-content');
+  if (lead.dominant_pattern && patternBriefs[lead.dominant_pattern]) {
+    briefEl.style.display = 'block';
+    briefContent.innerHTML = `<strong>${getPatternMeta(lead.dominant_pattern).short}:</strong> ${patternBriefs[lead.dominant_pattern]}`;
+    // colour based on pattern class
+    const m = getPatternMeta(lead.dominant_pattern);
+    const bgMap = {p1:'rgba(204,34,0,.08)',p2:'rgba(239,68,68,.08)',p3:'rgba(234,88,12,.08)',p4:'rgba(202,138,4,.08)',p5:'rgba(101,163,13,.08)',p6:'rgba(6,182,212,.08)',p7:'rgba(79,70,229,.08)',p8:'rgba(168,85,247,.08)',p9:'rgba(100,116,139,.08)'};
+    const clrMap = {p1:'#CC2200',p2:'#DC2626',p3:'#EA580C',p4:'#CA8A04',p5:'#65A30D',p6:'#0891B2',p7:'#4F46E5',p8:'#9333EA',p9:'#64748B'};
+    briefEl.style.background = bgMap[m.cls] || 'var(--danger-bg)';
+    briefEl.style.borderColor = 'transparent';
+    briefEl.querySelector('div').style.color = clrMap[m.cls] || 'var(--danger-text)';
+    briefContent.style.color = clrMap[m.cls] || 'var(--danger-text)';
+  } else {
+    briefEl.style.display = 'none';
+  }
 }
 
 async function saveLeadStatus() {
@@ -1548,6 +2027,311 @@ async function savePlan() {
   }
 }
 
+// ── Validation Dashboard ──────────────────────────────────────
+async function loadValidation() {
+  const leads = await db('/rest/v1/leads?select=*&order=created_at.desc');
+  const allLeadsData = leads || [];
+
+  // Progress stats
+  const patternEngineLeads = allLeadsData.filter(l => l.dominant_pattern);
+  const highConfLeads = allLeadsData.filter(l => l.dominant_pattern_confidence != null && l.dominant_pattern_confidence >= 75);
+  const bookedLeads = allLeadsData.filter(l => l.booking_date);
+  const convertedLeads = allLeadsData.filter(l => l.status === 'converted');
+
+  document.getElementById('vl-total').textContent = allLeadsData.length;
+  document.getElementById('vl-pattern-engine').textContent = patternEngineLeads.length;
+  document.getElementById('vl-high-conf').textContent = highConfLeads.length;
+  document.getElementById('vl-booked').textContent = bookedLeads.length;
+  document.getElementById('vl-converted').textContent = convertedLeads.length;
+
+  const pct = Math.min(100, Math.round((allLeadsData.length / 100) * 100));
+  document.getElementById('vl-progress-fill').style.width = pct + '%';
+  document.getElementById('vl-progress-label').textContent = `${allLeadsData.length} / 100 assessments`;
+
+  // ── Pattern Accuracy (recognition_rate by dominant_pattern)
+  const patternRecog = {};
+  const patternTotal = {};
+  allLeadsData.forEach(l => {
+    if (!l.dominant_pattern) return;
+    patternTotal[l.dominant_pattern] = (patternTotal[l.dominant_pattern] || 0) + 1;
+    if (l.recognition_rate != null) {
+      if (!patternRecog[l.dominant_pattern]) patternRecog[l.dominant_pattern] = [];
+      patternRecog[l.dominant_pattern].push(l.recognition_rate);
+    }
+  });
+  const patAccEl = document.getElementById('vl-pattern-accuracy');
+  const patAccData = Object.entries(patternTotal).map(([name, total]) => {
+    const rates = patternRecog[name] || [];
+    const avgRate = rates.length ? Math.round(rates.reduce((a,b)=>a+b,0)/rates.length) : null;
+    return { name, total, avgRate };
+  }).filter(p => p.avgRate !== null).sort((a,b) => b.avgRate - a.avgRate);
+
+  if (patAccData.length === 0) {
+    patAccEl.innerHTML = '<div class="empty" style="padding:16px;font-size:12px;">No recognition data yet — fill recognition_rate after calls</div>';
+  } else {
+    patAccEl.innerHTML = patAccData.map(p => {
+      const m = getPatternMeta(p.name);
+      const pillClass = p.avgRate >= 75 ? 'vl-pill-green' : p.avgRate >= 60 ? 'vl-pill-amber' : 'vl-pill-red';
+      return `<div class="vl-acc-row">
+        <span class="vl-acc-name">${m.short}</span>
+        <div class="vl-acc-bar"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${p.avgRate}%;background:${p.avgRate>=75?'#16A34A':p.avgRate>=60?'#CA8A04':'#CC2200'};"></div></div></div>
+        <span class="vl-acc-pill ${pillClass}">${p.avgRate}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Layer Recognition (recognition_rate by dominant_layer)
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layerRecog = {};
+  allLeadsData.forEach(l => {
+    if (l.dominant_layer == null || l.recognition_rate == null) return;
+    const idx = l.dominant_layer - 1;
+    if (!layerRecog[idx]) layerRecog[idx] = [];
+    layerRecog[idx].push(l.recognition_rate);
+  });
+  const layerRecEl = document.getElementById('vl-layer-recognition');
+  const layerRecData = Object.entries(layerRecog).map(([idx, rates]) => ({
+    name: layerNames[parseInt(idx)] || `Layer ${parseInt(idx)+1}`,
+    avg: Math.round(rates.reduce((a,b)=>a+b,0)/rates.length)
+  })).sort((a,b)=>b.avg-a.avg);
+
+  if (layerRecData.length === 0) {
+    layerRecEl.innerHTML = '<div class="empty" style="padding:16px;font-size:12px;">No data yet</div>';
+  } else {
+    layerRecEl.innerHTML = layerRecData.map(l => {
+      const pillClass = l.avg >= 75 ? 'vl-pill-green' : l.avg >= 60 ? 'vl-pill-amber' : 'vl-pill-red';
+      return `<div class="vl-acc-row">
+        <span class="vl-acc-name">${l.name}</span>
+        <div class="vl-acc-bar"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${l.avg}%;background:${l.avg>=75?'#16A34A':l.avg>=60?'#CA8A04':'#CC2200'};"></div></div></div>
+        <span class="vl-acc-pill ${pillClass}">${l.avg}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Confidence Distribution
+  const confBuckets = [
+    { label: '90%+', min: 90, max: 101, color: '#16A34A' },
+    { label: '75–89%', min: 75, max: 90, color: '#65A30D' },
+    { label: '60–74%', min: 60, max: 75, color: '#CA8A04' },
+    { label: '<60%', min: 0, max: 60, color: '#CC2200' }
+  ];
+  const confLeadsAll = allLeadsData.filter(l => l.dominant_pattern_confidence != null);
+  const maxBucket = Math.max(...confBuckets.map(b => confLeadsAll.filter(l => l.dominant_pattern_confidence >= b.min && l.dominant_pattern_confidence < b.max).length), 1);
+  const confEl = document.getElementById('vl-conf-dist');
+  confEl.innerHTML = confBuckets.map(b => {
+    const cnt = confLeadsAll.filter(l => l.dominant_pattern_confidence >= b.min && l.dominant_pattern_confidence < b.max).length;
+    const barW = Math.round((cnt / maxBucket) * 100);
+    return `<div class="vl-conf-row">
+      <span class="vl-conf-label">${b.label}</span>
+      <div class="vl-conf-bar"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${barW}%;background:${b.color};"></div></div></div>
+      <span class="vl-conf-cnt">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  // ── Hidden Index Combinations
+  const comboCounts = {};
+  allLeadsData.forEach(l => {
+    if (l.stress_load_index == null || l.behavioral_resilience_index == null) return;
+    const sliHigh = l.stress_load_index >= 7;
+    const sliLow = l.stress_load_index <= 4;
+    const briLow = l.behavioral_resilience_index <= 4;
+    const gsiLow = l.glucose_stability_index != null && l.glucose_stability_index <= 4;
+    const syliHigh = l.system_load_index != null && l.system_load_index >= 3;
+    if (sliHigh && briLow) comboCounts['High SLI + Low BRI'] = (comboCounts['High SLI + Low BRI'] || 0) + 1;
+    if (gsiLow && sliHigh) comboCounts['Low GSI + High SLI'] = (comboCounts['Low GSI + High SLI'] || 0) + 1;
+    if (syliHigh && briLow) comboCounts['High SYLI + Low BRI'] = (comboCounts['High SYLI + Low BRI'] || 0) + 1;
+    if (sliHigh && briLow && gsiLow) comboCounts['All indices critical'] = (comboCounts['All indices critical'] || 0) + 1;
+    if (sliLow) comboCounts['Low stress load (resilient)'] = (comboCounts['Low stress load (resilient)'] || 0) + 1;
+  });
+  const comboEl = document.getElementById('vl-index-combos');
+  const combos = Object.entries(comboCounts).sort((a,b)=>b[1]-a[1]);
+  comboEl.innerHTML = combos.length ? combos.slice(0,5).map(([name, cnt]) =>
+    `<div class="vl-combo-row"><span class="vl-combo-name">${name}</span><span class="vl-combo-cnt">${cnt}×</span></div>`
+  ).join('') : '<div class="empty" style="padding:16px;font-size:12px;">Need more index data</div>';
+
+  // ── Emerging Insights via Claude API
+  await loadValidationInsights(allLeadsData, patAccData, layerRecData);
+
+  // ── OUTCOME INTELLIGENCE ──────────────────────────────────────
+
+  // Funnel
+  const total = allLeadsData.length;
+  const booked = bookedLeads.length;
+  const attended = allLeadsData.filter(l => l.call_attended === true).length;
+  const converted = convertedLeads.length;
+  const funnelEl = document.getElementById('vl-funnel');
+  funnelEl.innerHTML = `
+    <div class="vl-funnel-step" style="background:#F1EFE8;">
+      <div class="vl-funnel-n" style="color:#5F5E5A;">${total}</div>
+      <div class="vl-funnel-label">Assessment completed</div>
+      <div class="vl-funnel-bar-wrap"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:100%;background:#888780;"></div></div></div>
+      <div class="vl-funnel-pct" style="color:#5F5E5A;">100%</div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;">↓</div>
+    <div class="vl-funnel-step" style="background:var(--info-bg);">
+      <div class="vl-funnel-n" style="color:var(--info-text);">${booked}</div>
+      <div class="vl-funnel-label">Call booked</div>
+      <div class="vl-funnel-bar-wrap"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${total?Math.round(booked/total*100):0}%;background:#378ADD;"></div></div></div>
+      <div class="vl-funnel-pct" style="color:var(--info-text);">${total?Math.round(booked/total*100):0}%</div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;">↓</div>
+    <div class="vl-funnel-step" style="background:var(--warning-bg);">
+      <div class="vl-funnel-n" style="color:var(--warning-text);">${attended}</div>
+      <div class="vl-funnel-label">Call attended</div>
+      <div class="vl-funnel-bar-wrap"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${booked?Math.round(attended/booked*100):0}%;background:#EF9F27;"></div></div></div>
+      <div class="vl-funnel-pct" style="color:var(--warning-text);">${booked?Math.round(attended/booked*100):0}% of booked</div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;">↓</div>
+    <div class="vl-funnel-step" style="background:var(--success-bg);">
+      <div class="vl-funnel-n" style="color:var(--success-text);">${converted}</div>
+      <div class="vl-funnel-label">Converted to client</div>
+      <div class="vl-funnel-bar-wrap"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${attended?Math.round(converted/attended*100):0}%;background:#639922;"></div></div></div>
+      <div class="vl-funnel-pct" style="color:var(--success-text);">${attended?Math.round(converted/attended*100):0}% of attended</div>
+    </div>
+    <div class="vl-funnel-note">${total ? Math.round(converted/total*100) : 0}% of total assessments → client</div>`;
+
+  // Conversion by pattern
+  const patConvEl = document.getElementById('vl-conv-by-pattern');
+  const patConvData = Object.keys(patternTotal).map(name => {
+    const inPat = allLeadsData.filter(l => l.dominant_pattern === name);
+    const convInPat = inPat.filter(l => l.status === 'converted').length;
+    const rate = inPat.length ? Math.round((convInPat / inPat.length) * 100) : 0;
+    return { name, rate, total: inPat.length };
+  }).filter(p => p.total >= 1).sort((a,b)=>b.rate-a.rate);
+
+  patConvEl.innerHTML = patConvData.length ? patConvData.map(p => {
+    const m = getPatternMeta(p.name);
+    const pillClass = p.rate >= 50 ? 'vl-pill-green' : p.rate >= 30 ? 'vl-pill-amber' : 'vl-pill-red';
+    return `<div class="vl-oc-row">
+      <span class="vl-oc-name">${m.short}</span>
+      <div class="vl-oc-bar"><div class="cc-pat-bar"><div class="cc-pat-fill" style="width:${p.rate}%;background:${p.rate>=50?'#16A34A':p.rate>=30?'#CA8A04':'#CC2200'};"></div></div></div>
+      <span class="vl-acc-pill ${pillClass}" style="margin-left:4px;">${p.rate}%</span>
+    </div>`;
+  }).join('') : '<div style="font-size:11px;color:var(--text-muted);padding:8px 0;">No conversion data yet</div>';
+
+  // Conversion by dominant layer
+  const layerConvEl = document.getElementById('vl-conv-by-layer');
+  const layerConvData = [0,1,2,3,4].map(idx => {
+    const inLayer = allLeadsData.filter(l => l.dominant_layer === idx + 1);
+    const convInLayer = inLayer.filter(l => l.status === 'converted').length;
+    const rate = inLayer.length ? Math.round((convInLayer / inLayer.length) * 100) : null;
+    return { name: layerNames[idx], rate, total: inLayer.length };
+  }).filter(l => l.total > 0 && l.rate !== null).sort((a,b)=>b.rate-a.rate);
+
+  layerConvEl.innerHTML = layerConvData.length ? layerConvData.map(l => {
+    const pillClass = l.rate >= 50 ? 'vl-pill-green' : l.rate >= 30 ? 'vl-pill-amber' : 'vl-pill-red';
+    return `<div class="vl-oc-row">
+      <span class="vl-oc-name">${l.name} weakest</span>
+      <span class="vl-acc-pill ${pillClass}" style="margin-left:auto;">${l.rate}%</span>
+    </div>`;
+  }).join('') : '<div style="font-size:11px;color:var(--text-muted);padding:8px 0;">No data yet</div>';
+
+  // Conversion by hidden index combo
+  const comboConvEl = document.getElementById('vl-conv-by-combo');
+  const comboDefs = [
+    { name: 'High SLI + Low BRI', fn: l => l.stress_load_index >= 7 && l.behavioral_resilience_index <= 4 },
+    { name: 'Low GSI + High SLI', fn: l => l.glucose_stability_index <= 4 && l.stress_load_index >= 7 },
+    { name: 'High SYLI + Low BRI', fn: l => l.system_load_index >= 3 && l.behavioral_resilience_index <= 4 },
+    { name: 'All indices critical', fn: l => l.stress_load_index >= 7 && l.behavioral_resilience_index <= 4 && l.glucose_stability_index <= 4 }
+  ];
+  comboConvEl.innerHTML = comboDefs.map(c => {
+    const inCombo = allLeadsData.filter(l => {
+      try { return c.fn(l); } catch(e) { return false; }
+    });
+    if (inCombo.length === 0) return '';
+    const convRate = Math.round((inCombo.filter(l=>l.status==='converted').length / inCombo.length) * 100);
+    const pillClass = convRate >= 50 ? 'vl-pill-green' : convRate >= 30 ? 'vl-pill-amber' : 'vl-pill-red';
+    return `<div class="vl-oc-row">
+      <span class="vl-oc-name">${c.name}</span>
+      <span class="vl-acc-pill ${pillClass}" style="margin-left:auto;">${convRate}%</span>
+    </div>`;
+  }).filter(Boolean).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:8px 0;">No index data yet</div>';
+
+  // Conversion by narrative resonance score
+  const narrEl = document.getElementById('vl-conv-by-narrative');
+  const narrBuckets = [
+    { label: 'Recognition 80%+', min: 80, max: 101 },
+    { label: 'Recognition 60–79%', min: 60, max: 80 },
+    { label: 'Recognition <60%', min: 0, max: 60 }
+  ];
+  const narrLeads = allLeadsData.filter(l => l.narrative_resonance_score != null);
+  narrEl.innerHTML = narrBuckets.map(b => {
+    const inBucket = narrLeads.filter(l => l.narrative_resonance_score >= b.min && l.narrative_resonance_score < b.max);
+    if (inBucket.length === 0) return '';
+    const rate = Math.round((inBucket.filter(l=>l.status==='converted').length / inBucket.length) * 100);
+    const pillClass = rate >= 50 ? 'vl-pill-green' : rate >= 30 ? 'vl-pill-amber' : 'vl-pill-red';
+    return `<div class="vl-oc-row">
+      <span class="vl-oc-name">${b.label}</span>
+      <span class="vl-acc-pill ${pillClass}" style="margin-left:auto;">${rate}%</span>
+    </div>`;
+  }).filter(Boolean).join('') || '<div style="font-size:11px;color:var(--text-muted);padding:8px 0;">Fill narrative_resonance_score after calls to unlock this</div>';
+
+  // Show insight if enough data
+  const narrInsightEl = document.getElementById('vl-narrative-insight');
+  const highNarr = narrLeads.filter(l => l.narrative_resonance_score >= 80);
+  const highNarrConv = highNarr.filter(l => l.status === 'converted');
+  if (highNarr.length >= 3) {
+    const multiplier = (allLeadsData.length && converted)
+      ? (highNarrConv.length / highNarr.length / (converted / allLeadsData.length)).toFixed(1)
+      : null;
+    narrInsightEl.style.display = 'block';
+    narrInsightEl.textContent = multiplier
+      ? `Narrative resonance ≥80% → ${multiplier}× more likely to convert. Diagnostic accuracy predicts revenue.`
+      : `${highNarrConv.length} of ${highNarr.length} high-resonance leads converted. Pattern confirmed.`;
+  }
+}
+
+// ── Validation — Emerging Insights via Claude API ──────────────
+async function loadValidationInsights(leads, patAccData, layerRecData) {
+  const loadEl = document.getElementById('vl-insight-loading');
+  const contentEl = document.getElementById('vl-insight-content');
+  if (!loadEl || !contentEl) return;
+
+  loadEl.style.display = 'block';
+  contentEl.style.display = 'none';
+
+  const lowAccPatterns = patAccData.filter(p => p.avgRate < 70).map(p => p.name).join(', ');
+  const highAccPatterns = patAccData.filter(p => p.avgRate >= 80).map(p => p.name).join(', ');
+  const weakLayers = layerRecData.filter(l => l.avg < 60).map(l => l.name).join(', ');
+  const totalLeads = leads.length;
+
+  const prompt = `You are an assessment validation analyst for Amit Baruna's Metabolic Permission Assessment.
+
+Validation data (${totalLeads} assessments):
+- High recognition patterns (≥80%): ${highAccPatterns || 'None yet'}
+- Low recognition patterns (<70%): ${lowAccPatterns || 'None yet'}
+- Weak layer recognition (<60%): ${weakLayers || 'None yet'}
+
+Generate exactly 3 insights for improving the assessment engine. Each should tell Amit what to refine, scale, or investigate. Format as JSON array with fields: type (warn/positive/info), text. JSON only, no preamble.`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const insights = JSON.parse(clean);
+    const iconMap = { warn: 'ti-alert-triangle', positive: 'ti-trending-up', info: 'ti-bulb' };
+    const classMap = { warn: 'cc-insight-warn', positive: 'cc-insight-pos', info: 'cc-insight-info' };
+    contentEl.innerHTML = insights.map(ins => `
+      <div class="cc-insight-item ${classMap[ins.type] || 'cc-insight-info'}">
+        <i class="ti ${iconMap[ins.type] || 'ti-bulb'}"></i>
+        <span>${ins.text}</span>
+      </div>`).join('');
+    loadEl.style.display = 'none';
+    contentEl.style.display = 'block';
+  } catch(e) {
+    loadEl.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">Insight unavailable — check API key</span>';
+  }
+}
+
 // ── Analytics ──────────────────────────────────────────────────
 // ── Intelligence Layer Helpers ─────────────────────────────────
 
@@ -1616,11 +2400,33 @@ function getIndexClass(metric, value) {
 
 function renderIndexItem(label, value, metric, classification) {
   const cls = getIndexClass(metric, value);
-  const range = (metric === 'SYLI') ? '/5' : '/12';
-  return `<div class="index-item ${cls}">
+  const max = (metric === 'SYLI') ? 5 : 12;
+  const pct = value != null ? Math.round((value / max) * 100) : null;
+  const explanations = {
+    SLI: { high: 'High stress load — your body is under significant physiological stress. Priority: nervous system recovery.', mid: 'Moderate stress load — manageable but worth monitoring alongside sleep and recovery.', low: 'Low stress load — good physiological resilience to daily demands.' },
+    BRI: { high: 'High resilience — strong recovery capacity and adaptive response.', mid: 'Moderate resilience — recovery is present but inconsistent. Sleep and nutrition quality matter here.', low: 'Low resilience — recovery pathways are compromised. This is often the root cause of plateau.' },
+    GSI: { high: 'Good glucose stability — metabolic signalling is functioning well.', mid: 'Moderate instability — energy dips, cravings, or post-meal crashes are likely.', low: 'Poor glucose stability — this directly impacts fat metabolism, energy, and mood.' },
+    SYLI: { high: 'High system load — multiple physiological systems under strain simultaneously.', mid: 'Moderate load — 2-3 systems showing stress. Targeted protocol needed.', low: 'Localised load — only 1 system flagged. Easier to address with focused intervention.' }
+  };
+  const getExplanation = (m, v, mx) => {
+    const ratio = v / mx;
+    const ex = explanations[m];
+    if (!ex) return classification || '';
+    if (m === 'SYLI') return ratio >= 0.6 ? ex.high : ratio >= 0.4 ? ex.mid : ex.low;
+    return ratio >= 0.7 ? ex.high : ratio >= 0.4 ? ex.mid : ex.low;
+  };
+  const explanation = value != null ? getExplanation(metric, value, max) : '';
+  return `<div class="index-item ${cls}" style="grid-column:span 1;">
     <div class="index-item-label">${label}</div>
-    <div class="index-item-value">${value != null ? value + range : '—'}</div>
+    <div style="display:flex;align-items:baseline;gap:6px;">
+      <div class="index-item-value">${pct != null ? pct + '%' : '—'}</div>
+      <div style="font-size:10px;color:var(--text-muted);">${value != null ? value + '/' + max : ''}</div>
+    </div>
+    <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:4px 0;">
+      <div style="height:100%;width:${pct||0}%;background:currentColor;border-radius:2px;opacity:0.6;"></div>
+    </div>
     <div class="index-item-class">${classification || ''}</div>
+    <div style="font-size:10px;color:var(--text-secondary);margin-top:5px;line-height:1.4;">${explanation}</div>
   </div>`;
 }
 
@@ -1649,8 +2455,9 @@ async function loadAnalytics() {
     ? Math.round((leadsData.filter(l => l.status === 'converted').length / leadsData.length) * 100)
     : 0;
   const followups = leadsData.filter(l => l.status === 'followup').length;
-  const avgScore = leadsData.length > 0
-    ? Math.round(leadsData.reduce((s, l) => s + (l.metabolic_score || 0), 0) / leadsData.length)
+  const scoredForAvg = leadsData.filter(l => l.metabolic_score != null);
+  const avgScore = scoredForAvg.length > 0
+    ? Math.round(scoredForAvg.reduce((s, l) => s + l.metabolic_score, 0) / scoredForAvg.length)
     : 0;
 
   document.getElementById('an-leads').textContent = leadsData.length;
@@ -1848,20 +2655,21 @@ async function loadAnalytics() {
       </div>`).join('')
     : '<div class="empty" style="padding:10px 0;">No multi-condition leads yet</div>';
 
-  // Layer averages
+  // Layer averages — only scored leads (metabolic_score not null)
   const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
+  const scoredForLayers = leadsData.filter(l => l.metabolic_score != null);
   const layerAvgs = layerKeys.map(k => {
-    const vals = leadsData.filter(l => l[k]).map(l => l[k]);
+    const vals = scoredForLayers.filter(l => l[k] != null).map(l => l[k]);
     return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
   });
 
-  document.getElementById('an-layers').innerHTML = leadsData.length
+  document.getElementById('an-layers').innerHTML = scoredForLayers.length
     ? layerAvgs.map((avg, i) => `<div class="lbar">
         <div class="ll"><span>Layer ${i+1} — ${layerNames[i]}</span><span>avg ${avg}%</span></div>
         <div class="bt"><div class="bf" style="width:${avg}%;background:${layerColor(avg)};"></div></div>
       </div>`).join('')
-    : '<div style="font-size:11px;color:var(--text-muted);">No data yet</div>';
+    : '<div style="font-size:11px;color:var(--text-muted);">No scored data yet</div>';
 }
 
 // ── Dropdowns ──────────────────────────────────────────────────
