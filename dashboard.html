@@ -162,7 +162,59 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .plan-item{font-size:11px;color:var(--text-secondary);padding:2px 0;}
 .plan-day{font-size:11px;font-weight:500;color:var(--text-primary);margin-top:6px;margin-bottom:2px;}
 
-/* Analytics */
+/* ── Intelligence Layer Components ──────────────────────────── */
+.intel-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;}
+.intel-card-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
+.pattern-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.02em;}
+.pattern-badge.p1{background:rgba(204,34,0,.1);color:#CC2200;}
+.pattern-badge.p2{background:rgba(239,68,68,.1);color:#DC2626;}
+.pattern-badge.p3{background:rgba(234,88,12,.1);color:#EA580C;}
+.pattern-badge.p4{background:rgba(202,138,4,.1);color:#CA8A04;}
+.pattern-badge.p5{background:rgba(101,163,13,.1);color:#65A30D;}
+.pattern-badge.p6{background:rgba(6,182,212,.1);color:#0891B2;}
+.pattern-badge.p7{background:rgba(79,70,229,.1);color:#4F46E5;}
+.pattern-badge.p8{background:rgba(168,85,247,.1);color:#9333EA;}
+.pattern-badge.p9{background:rgba(100,116,139,.1);color:#64748B;}
+.conf-bar-wrap{margin-top:6px;}
+.conf-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-secondary);margin-bottom:4px;}
+.conf-bar-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.conf-bar-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+.conf-fill-high{background:#16A34A;}
+.conf-fill-mid{background:#CA8A04;}
+.conf-fill-low{background:#64748B;}
+.index-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.index-item{background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;}
+.index-item-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:4px;}
+.index-item-value{font-size:18px;font-weight:700;color:var(--text-primary);}
+.index-item-class{font-size:10px;color:var(--text-secondary);margin-top:2px;}
+.index-item.severe .index-item-value{color:#CC2200;}
+.index-item.high .index-item-value{color:#EA580C;}
+.index-item.moderate .index-item-value{color:#CA8A04;}
+.index-item.low .index-item-value{color:#16A34A;}
+.pattern-dist-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);}
+.pattern-dist-row:last-child{border-bottom:none;}
+.pattern-dist-name{font-size:11px;color:var(--text-secondary);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pattern-dist-bar{flex:0 0 80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.pattern-dist-fill{height:100%;border-radius:3px;}
+.pattern-dist-count{font-size:11px;font-weight:600;color:var(--text-primary);width:28px;text-align:right;}
+.pattern-dist-pct{font-size:10px;color:var(--text-muted);width:32px;text-align:right;}
+.intel-stat-row{display:flex;gap:10px;margin-bottom:10px;}
+.intel-stat{flex:1;background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
+.intel-stat-val{font-size:20px;font-weight:700;color:var(--text-primary);}
+.intel-stat-lbl{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.aas-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border);}
+.aas-row:last-child{border-bottom:none;}
+.aas-label{font-size:11px;color:var(--text-secondary);}
+.aas-gap{font-size:12px;font-weight:600;}
+.aas-gap.good{color:#16A34A;}
+.aas-gap.warn{color:#CA8A04;}
+.aas-gap.alert{color:#CC2200;}
+.secondary-pattern{margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:6px;border:0.5px solid var(--border);}
+.secondary-pattern-label{font-size:10px;color:var(--text-muted);margin-bottom:4px;}
+.risk-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;margin-left:6px;}
+.risk-high{background:rgba(204,34,0,.1);color:#CC2200;}
+.risk-mod{background:rgba(202,138,4,.1);color:#CA8A04;}
+.risk-low{background:rgba(22,163,74,.1);color:#16A34A;}
 .an-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
 .trend-up{color:#3B6D11;font-size:11px;margin-top:4px;}
 .trend-dn{color:#993C1D;font-size:11px;margin-top:4px;}
@@ -580,7 +632,53 @@ select.form-input{cursor:pointer;}
           </div>
         </div>
 
+        <!-- PHASE A: Pattern Distribution -->
         <div class="three-col">
+          <div class="intel-card" style="margin-bottom:0;">
+            <div class="intel-card-title">Pattern Distribution</div>
+            <div id="an-pattern-dist">
+              <div class="empty" style="padding:16px 0;font-size:11px;">No pattern data yet</div>
+            </div>
+          </div>
+
+          <!-- PHASE A: Hidden Intelligence Averages -->
+          <div class="intel-card" style="margin-bottom:0;">
+            <div class="intel-card-title">Intelligence Indices — Population Averages</div>
+            <div class="intel-stat-row">
+              <div class="intel-stat">
+                <div class="intel-stat-val" id="an-avg-sli">—</div>
+                <div class="intel-stat-lbl">Avg SLI<br>Stress Load</div>
+              </div>
+              <div class="intel-stat">
+                <div class="intel-stat-val" id="an-avg-bri">—</div>
+                <div class="intel-stat-lbl">Avg BRI<br>Resilience</div>
+              </div>
+              <div class="intel-stat">
+                <div class="intel-stat-val" id="an-avg-syli">—</div>
+                <div class="intel-stat-lbl">Avg SYLI<br>System Load</div>
+              </div>
+            </div>
+            <div class="intel-card-title" style="margin-top:12px;">Avg Confidence by Pattern</div>
+            <div id="an-conf-by-pattern">
+              <div class="empty" style="font-size:11px;">No data yet</div>
+            </div>
+          </div>
+
+          <!-- Existing sections preserved -->
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">🔥 Multi-condition leads</div></div>
+            <div id="an-multiflags">
+              <div class="empty" style="padding:20px 0;">No data yet</div>
+            </div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:10px;">Weakest layer overall</div>
+            <div id="an-layers">
+              <div class="empty" style="padding:10px 0;font-size:11px;">No data yet</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="three-col" style="margin-top:14px;">
           <div class="card" style="margin-bottom:0;">
             <div class="card-header"><div class="card-title">Condition flags</div></div>
             <div id="an-flags">
@@ -593,15 +691,10 @@ select.form-input{cursor:pointer;}
               <div class="empty" style="padding:20px 0;">No data yet</div>
             </div>
           </div>
-          <div class="card" style="margin-bottom:0;">
-            <div class="card-header"><div class="card-title">🔥 Multi-condition leads</div></div>
-            <div id="an-multiflags">
-              <div class="empty" style="padding:20px 0;">No data yet</div>
-            </div>
-            <div class="divider"></div>
-            <div class="card-title" style="margin-bottom:10px;">Weakest layer overall</div>
-            <div id="an-layers">
-              <div class="empty" style="padding:10px 0;font-size:11px;">No data yet</div>
+          <div class="intel-card" style="margin-bottom:0;">
+            <div class="intel-card-title">Dominant Pattern Confidence Distribution</div>
+            <div id="an-conf-dist">
+              <div class="empty" style="font-size:11px;padding:16px 0;">No data yet</div>
             </div>
           </div>
         </div>
@@ -692,6 +785,28 @@ select.form-input{cursor:pointer;}
             </div>
             <button class="btn-primary full" onclick="saveLeadStatus()">Update lead</button>
             <button class="btn-outline full" onclick="convertToClient()">Convert to client</button>
+          </div>
+        </div>
+
+        <!-- PHASE A: Intelligence Card -->
+        <div class="intel-card" id="lp-intelligence" style="display:none;">
+          <div class="intel-card-title">Clinical Intelligence — Pattern Engine Output</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Dominant Pattern</div>
+              <div id="lp-dominant-pattern"></div>
+              <div class="conf-bar-wrap" id="lp-dom-conf-wrap"></div>
+              <div id="lp-secondary-pattern"></div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Hidden Intelligence Indices</div>
+              <div class="index-grid" id="lp-intel-indices"></div>
+            </div>
+          </div>
+          <div id="lp-aas-section" style="display:none;">
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Awareness Alignment — Self-Perception vs Assessment</div>
+            <div id="lp-aas-rows"></div>
           </div>
         </div>
       </div>
@@ -884,11 +999,15 @@ async function loadOverview() {
       const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
       const isHot = flags.length >= 2;
       const hasCal = l.notes && l.notes.includes('calendly');
+      const patternHtml = l.dominant_pattern
+        ? `<span class="pattern-badge ${getPatternMeta(l.dominant_pattern).cls}" style="font-size:9px;padding:2px 6px;">${getPatternMeta(l.dominant_pattern).short}</span>`
+        : '';
       return `<div class="row" onclick="openLeadProfile(${l.id})">
         <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
         <div>
           <div class="rname">${l.name || '—'}</div>
           <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.slice(0,2).join(', ') || 'No flags'}</div>
+          ${patternHtml}
         </div>
         <div class="badges">
           ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
@@ -1012,10 +1131,9 @@ async function openClientProfile(id) {
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
   document.getElementById('profile-layers').innerHTML = layerKeys.map((k, i) => {
     const val = client[k] || 0;
-    const pct = Math.round((val / 20) * 100);
     return `<div class="lbar">
-      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}/20</span></div>
-      <div class="bt"><div class="bf" style="width:${pct}%;background:${layerColor(pct)};"></div></div>
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
+      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
     </div>`;
   }).join('');
 
@@ -1176,10 +1294,9 @@ async function openLeadProfile(id) {
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
   document.getElementById('lp-layers').innerHTML = layerKeys.map((k, i) => {
     const val = lead[k] || 0;
-    const pct = Math.round((val / 20) * 100);
     return `<div class="lbar">
-      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}/20</span></div>
-      <div class="bt"><div class="bf" style="width:${pct}%;background:${layerColor(pct)};"></div></div>
+      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
+      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
     </div>`;
   }).join('');
 
@@ -1193,6 +1310,50 @@ async function openLeadProfile(id) {
       Metabolic score: <strong>${lead.metabolic_score || '?'}</strong><br>
       Submitted: ${formatDate(lead.created_at)}
     </div>`;
+
+  // ── INTELLIGENCE CARD ───────────────────────────────────────
+  const hasIntel = lead.dominant_pattern || lead.stress_load_index != null;
+  const intelCard = document.getElementById('lp-intelligence');
+  intelCard.style.display = hasIntel ? 'block' : 'none';
+
+  if (hasIntel) {
+    // Dominant pattern + confidence
+    document.getElementById('lp-dominant-pattern').innerHTML =
+      renderPatternBadge(lead.dominant_pattern);
+
+    document.getElementById('lp-dom-conf-wrap').innerHTML =
+      renderConfidenceBar(lead.dominant_pattern_confidence, 'Dominant confidence');
+
+    // Secondary pattern
+    const secEl = document.getElementById('lp-secondary-pattern');
+    if (lead.secondary_pattern && lead.secondary_pattern_confidence != null) {
+      secEl.innerHTML = `<div class="secondary-pattern">
+        <div class="secondary-pattern-label">Secondary Pattern</div>
+        ${renderPatternBadge(lead.secondary_pattern)}
+        ${renderConfidenceBar(lead.secondary_pattern_confidence, 'Secondary confidence')}
+      </div>`;
+    } else {
+      secEl.innerHTML = '';
+    }
+
+    // Intelligence Indices
+    document.getElementById('lp-intel-indices').innerHTML =
+      renderIndexItem('Stress Load (SLI)', lead.stress_load_index, 'SLI', lead.stress_load_classification) +
+      renderIndexItem('Resilience (BRI)', lead.behavioral_resilience_index, 'BRI', lead.behavioral_resilience_classification) +
+      renderIndexItem('Glucose Stability', lead.glucose_stability_index, 'GSI', lead.glucose_stability_classification) +
+      renderIndexItem('System Load (SYLI)', lead.system_load_index, 'SYLI', lead.system_load_classification);
+
+    // AAS — show only if data exists
+    const hasAAS = lead.sleep_alignment != null || lead.stress_alignment != null || lead.gut_alignment != null;
+    const aasSection = document.getElementById('lp-aas-section');
+    aasSection.style.display = hasAAS ? 'block' : 'none';
+    if (hasAAS) {
+      document.getElementById('lp-aas-rows').innerHTML =
+        renderAASGap('Sleep perception vs score', lead.sleep_alignment) +
+        renderAASGap('Stress perception vs score', lead.stress_alignment) +
+        renderAASGap('Gut perception vs score', lead.gut_alignment);
+    }
+  }
 
   document.getElementById('lp-status-select').value = lead.status || 'new';
   document.getElementById('lp-notes').value = lead.notes && !lead.notes.toLowerCase().includes('calendly') ? lead.notes : '';
@@ -1388,6 +1549,93 @@ async function savePlan() {
 }
 
 // ── Analytics ──────────────────────────────────────────────────
+// ── Intelligence Layer Helpers ─────────────────────────────────
+
+const PATTERN_META = {
+  'System-Wide Adaptation Deficit': {cls:'p1', short:'System-Wide'},
+  'Recovery Deficit':               {cls:'p2', short:'Recovery Deficit'},
+  'Nervous System Overload':        {cls:'p3', short:'NS Overload'},
+  'Fuel Regulation Bottleneck':     {cls:'p4', short:'Fuel Bottleneck'},
+  'Metabolic Resistance Pattern':   {cls:'p5', short:'Metabolic Resistance'},
+  'Circadian Disruption Pattern':   {cls:'p6', short:'Circadian'},
+  'Gut-Brain Load':                 {cls:'p7', short:'Gut-Brain'},
+  'Behavioral Recovery Gap':        {cls:'p8', short:'Behavioral Gap'},
+  'Single System Bottleneck':       {cls:'p9', short:'Single Bottleneck'},
+};
+
+function getPatternMeta(name) {
+  return PATTERN_META[name] || {cls:'p9', short: name || 'Unknown'};
+}
+
+function renderPatternBadge(name) {
+  if (!name) return '<span style="font-size:11px;color:var(--text-muted);">No pattern data</span>';
+  const m = getPatternMeta(name);
+  return `<span class="pattern-badge ${m.cls}">${m.short}</span>`;
+}
+
+function renderConfidenceBar(conf, label) {
+  if (conf == null) return '';
+  const fillClass = conf >= 75 ? 'conf-fill-high' : conf >= 50 ? 'conf-fill-mid' : 'conf-fill-low';
+  const confLabel = conf >= 75 ? 'High confidence' : conf >= 50 ? 'Moderate confidence' : 'Low confidence';
+  return `<div class="conf-bar-wrap">
+    <div class="conf-bar-label"><span>${label || 'Confidence'}</span><span>${conf}%</span></div>
+    <div class="conf-bar-track"><div class="conf-bar-fill ${fillClass}" style="width:${conf}%;"></div></div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">${confLabel}</div>
+  </div>`;
+}
+
+function getIndexClass(metric, value) {
+  // Returns severity class based on metric and value
+  // Lower = worse for SLI, BRI; Higher = worse for SYLI
+  if (metric === 'SLI') {
+    if (value <= 3) return 'severe';
+    if (value <= 6) return 'high';
+    if (value <= 9) return 'moderate';
+    return 'low';
+  }
+  if (metric === 'BRI') {
+    if (value <= 3) return 'severe';
+    if (value <= 6) return 'high';
+    if (value <= 9) return 'moderate';
+    return 'low';
+  }
+  if (metric === 'GSI') {
+    if (value <= 3) return 'severe';
+    if (value <= 6) return 'high';
+    if (value <= 9) return 'moderate';
+    return 'low';
+  }
+  if (metric === 'SYLI') {
+    if (value >= 4) return 'severe';
+    if (value >= 3) return 'high';
+    if (value >= 2) return 'moderate';
+    return 'low';
+  }
+  return '';
+}
+
+function renderIndexItem(label, value, metric, classification) {
+  const cls = getIndexClass(metric, value);
+  const range = (metric === 'SYLI') ? '/5' : '/12';
+  return `<div class="index-item ${cls}">
+    <div class="index-item-label">${label}</div>
+    <div class="index-item-value">${value != null ? value + range : '—'}</div>
+    <div class="index-item-class">${classification || ''}</div>
+  </div>`;
+}
+
+function renderAASGap(label, gap) {
+  if (gap == null) return '';
+  const abs = Math.abs(gap);
+  const cls = abs <= 1 ? 'good' : abs <= 3 ? 'warn' : 'alert';
+  const dir = gap > 0 ? '↑ overestimates' : gap < 0 ? '↓ underestimates' : '✓ aligned';
+  return `<div class="aas-row">
+    <span class="aas-label">${label}</span>
+    <span class="aas-gap ${cls}">${gap > 0 ? '+' : ''}${gap !== null ? gap.toFixed(1) : '—'} <span style="font-size:10px;font-weight:400;">${dir}</span></span>
+  </div>`;
+}
+
+// ── Upgraded openLeadProfile ───────────────────────────────────
 async function loadAnalytics() {
   const [leads, clients] = await Promise.all([
     db('/rest/v1/leads?select=*'),
@@ -1435,6 +1683,93 @@ async function loadAnalytics() {
       </div>`;
     }).join('');
   }
+
+  // ── PHASE A: Pattern Distribution ───────────────────────────
+  const scoredLeads = leadsData.filter(l => l.dominant_pattern);
+  const patternMap = {};
+  scoredLeads.forEach(l => {
+    const p = l.dominant_pattern;
+    if (!patternMap[p]) patternMap[p] = 0;
+    patternMap[p]++;
+  });
+  const sortedPatterns = Object.entries(patternMap).sort((a,b) => b[1]-a[1]);
+  const maxPat = Math.max(...sortedPatterns.map(p => p[1]), 1);
+  const patColors = ['#CC2200','#DC2626','#EA580C','#CA8A04','#65A30D','#0891B2','#4F46E5','#9333EA','#64748B'];
+
+  document.getElementById('an-pattern-dist').innerHTML = scoredLeads.length > 0
+    ? sortedPatterns.map(([name, cnt], i) => {
+        const m = getPatternMeta(name);
+        const pct = Math.round((cnt / scoredLeads.length) * 100);
+        return `<div class="pattern-dist-row">
+          <div class="pattern-dist-name">${m.short}</div>
+          <div class="pattern-dist-bar">
+            <div class="pattern-dist-fill" style="width:${Math.round((cnt/maxPat)*100)}%;background:${patColors[i]||'#64748B'};"></div>
+          </div>
+          <div class="pattern-dist-count">${cnt}</div>
+          <div class="pattern-dist-pct">${pct}%</div>
+        </div>`;
+      }).join('') +
+      `<div style="font-size:10px;color:var(--text-muted);margin-top:8px;">${scoredLeads.length} of ${leadsData.length} assessments have pattern data</div>`
+    : '<div class="empty" style="padding:16px 0;font-size:11px;">No pattern data yet — complete assessments will appear here</div>';
+
+  // ── PHASE A: Intelligence Indices Averages ───────────────────
+  function avg(arr, key) {
+    const vals = arr.filter(l => l[key] != null).map(l => l[key]);
+    return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+  }
+  const avgSLI = avg(scoredLeads, 'stress_load_index');
+  const avgBRI = avg(scoredLeads, 'behavioral_resilience_index');
+  const avgSYLI = avg(scoredLeads, 'system_load_index');
+
+  document.getElementById('an-avg-sli').textContent = avgSLI || '—';
+  document.getElementById('an-avg-bri').textContent = avgBRI || '—';
+  document.getElementById('an-avg-syli').textContent = avgSYLI || '—';
+
+  // Avg confidence by pattern
+  const confByPattern = {};
+  scoredLeads.forEach(l => {
+    if (!l.dominant_pattern || l.dominant_pattern_confidence == null) return;
+    if (!confByPattern[l.dominant_pattern]) confByPattern[l.dominant_pattern] = [];
+    confByPattern[l.dominant_pattern].push(l.dominant_pattern_confidence);
+  });
+  const confEntries = Object.entries(confByPattern)
+    .map(([p, confs]) => [p, Math.round(confs.reduce((a,b)=>a+b,0)/confs.length)])
+    .sort((a,b) => b[1]-a[1]);
+
+  document.getElementById('an-conf-by-pattern').innerHTML = confEntries.length
+    ? confEntries.map(([p, avgConf]) => {
+        const m = getPatternMeta(p);
+        const fillClass = avgConf >= 75 ? 'conf-fill-high' : avgConf >= 50 ? 'conf-fill-mid' : 'conf-fill-low';
+        return `<div style="margin-bottom:8px;">
+          <div class="conf-bar-label"><span>${m.short}</span><span>${avgConf}%</span></div>
+          <div class="conf-bar-track"><div class="conf-bar-fill ${fillClass}" style="width:${avgConf}%;"></div></div>
+        </div>`;
+      }).join('')
+    : '<div style="font-size:11px;color:var(--text-muted);">No confidence data yet</div>';
+
+  // Confidence distribution buckets
+  const confBuckets = {'< 40%': 0, '40–59%': 0, '60–74%': 0, '75–89%': 0, '90%+': 0};
+  scoredLeads.forEach(l => {
+    const c = l.dominant_pattern_confidence;
+    if (c == null) return;
+    if (c < 40) confBuckets['< 40%']++;
+    else if (c < 60) confBuckets['40–59%']++;
+    else if (c < 75) confBuckets['60–74%']++;
+    else if (c < 90) confBuckets['75–89%']++;
+    else confBuckets['90%+']++;
+  });
+  const maxConf = Math.max(...Object.values(confBuckets), 1);
+  const confColors = ['#64748B','#CA8A04','#65A30D','#16A34A','#059669'];
+  document.getElementById('an-conf-dist').innerHTML = scoredLeads.length
+    ? Object.entries(confBuckets).map(([label, cnt], i) => `
+        <div class="pattern-dist-row">
+          <div class="pattern-dist-name">${label}</div>
+          <div class="pattern-dist-bar">
+            <div class="pattern-dist-fill" style="width:${Math.round((cnt/maxConf)*100)}%;background:${confColors[i]};"></div>
+          </div>
+          <div class="pattern-dist-count">${cnt}</div>
+        </div>`).join('')
+    : '<div style="font-size:11px;color:var(--text-muted);">No data yet</div>';
 
   // Flags breakdown
   const flagMap = {};
@@ -1508,7 +1843,7 @@ async function loadAnalytics() {
     ? multiLeads.map(l => `<div class="row" style="cursor:pointer;" onclick="openLeadProfile(${l.id})">
         <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
         <div><div class="rname">${l.name}</div>
-        <div class="rmeta">${l.flags ? l.flags.split(',').slice(0,2).join(', ') : ''}</div></div>
+        <div class="rmeta">${l.flags ? l.flags.split(',').slice(0,2).join(', ') : ''}${l.dominant_pattern ? ' · ' + getPatternMeta(l.dominant_pattern).short : ''}</div></div>
         <div class="badge b-hot">${l.flagCount} flags</div>
       </div>`).join('')
     : '<div class="empty" style="padding:10px 0;">No multi-condition leads yet</div>';
