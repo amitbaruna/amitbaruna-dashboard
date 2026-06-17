@@ -1281,8 +1281,11 @@ async function loadOverview() {
     // Update topbar alert (clear old first)
     const existingAlert = document.querySelector('.topbar-alert');
     if (existingAlert) existingAlert.remove();
-    const alertHtml = `<div class="topbar-alert" onclick="goScreen('overview')"><i class="ti ti-bell-ringing" style="font-size:13px;"></i>${attentionLeads.length} need attention</div>`;
-    document.querySelector('.topbar-right').insertAdjacentHTML('afterbegin', alertHtml);
+    const topbarRight = document.querySelector('.topbar-right');
+    if (topbarRight) {
+      const alertHtml = `<div class="topbar-alert"><i class="ti ti-bell-ringing" style="font-size:13px;"></i>${attentionLeads.length} need attention</div>`;
+      topbarRight.insertAdjacentHTML('afterbegin', alertHtml);
+    }
 
     queueEl.innerHTML = attentionLeads.map(l => {
       const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
@@ -2716,8 +2719,7 @@ function signOut() {
 
 // ── Init ───────────────────────────────────────────────────────
 async function init() {
-  document.getElementById('topbar-title').textContent = getGreeting();
-  await loadClients();
+  document.getElementById('topbar-title').textContent = 'Metabolic Intelligence Command Center';
   await loadOverview();
 }
 
