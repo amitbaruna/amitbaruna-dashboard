@@ -387,12 +387,19 @@ select.form-input{cursor:pointer;}
 .vl-oc-row:last-child{border-bottom:none;}
 .vl-oc-name{color:var(--text-secondary);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .vl-oc-bar{width:44px;flex-shrink:0;}
+.grade-btn{font-size:10px;padding:3px 9px;border:0.5px solid var(--border-md);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--text-secondary);font-family:inherit;transition:all .15s;}
+.grade-btn:hover{opacity:.8;}
+.grade-btn.active{background:#1E1E2E;color:#fff;border-color:#1E1E2E;}
 
 /* Topbar alert pill */
 .topbar-alert{display:flex;align-items:center;gap:5px;background:var(--danger-bg);border:0.5px solid #F5C4B3;border-radius:20px;font-size:11px;color:var(--danger-text);padding:3px 10px;cursor:pointer;}
 
 /* 5-stat grid for validation */
 .cc-stat-grid-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+.impact-badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.imp-high{background:#FAECE7;color:#993C1D;}
+.imp-mod{background:#FAEEDA;color:#854F0B;}
+.imp-low{background:#EAF3DE;color:#3B6D11;}
 
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -462,26 +469,24 @@ select.form-input{cursor:pointer;}
       <!-- COMMAND CENTER -->
       <div class="screen active" id="screen-overview">
 
-        <!-- ① Attention Queue -->
-        <div class="cc-section">
-          <div class="cc-section-header">
-            <span class="cc-label cc-label-red"><i class="ti ti-bell-ringing"></i> Attention Queue</span>
-            <span class="cc-section-sub">Leads needing action today — no contact in 6+ days, follow-ups due, new uncontacted</span>
-          </div>
-          <div class="card" style="margin-bottom:14px;">
-            <div id="ov-attention-queue">
-              <div class="empty" style="padding:20px;"><i class="ti ti-check"></i>All caught up</div>
+        <!-- ① Queue + ② Population + ③ Pattern — top row -->
+        <div class="two-col" style="margin-bottom:14px;">
+          <div>
+            <div class="cc-section-header">
+              <span class="cc-label cc-label-red"><i class="ti ti-bell-ringing"></i> Attention Queue</span>
+              <span class="cc-section-sub">6+ days no contact · follow-ups · new</span>
+            </div>
+            <div class="card">
+              <div id="ov-attention-queue">
+                <div class="empty" style="padding:20px;"><i class="ti ti-check"></i>All caught up</div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <!-- ② Population Snapshot + ③ Pattern Distribution -->
-        <div class="two-col">
           <div>
             <div class="cc-section-header">
               <span class="cc-label cc-label-blue"><i class="ti ti-users"></i> Population Snapshot</span>
             </div>
-            <div class="card">
+            <div class="card" style="margin-bottom:10px;">
               <div class="cc-stat-grid">
                 <div class="cc-stat"><div class="cc-stat-val" id="ov-total-assessments">—</div><div class="cc-stat-lbl">Assessments</div></div>
                 <div class="cc-stat"><div class="cc-stat-val" id="ov-avg-score">—</div><div class="cc-stat-lbl">Avg score</div></div>
@@ -490,15 +495,13 @@ select.form-input{cursor:pointer;}
               </div>
               <div class="cc-pop-meta" id="ov-pop-meta"></div>
             </div>
-          </div>
-          <div>
             <div class="cc-section-header">
               <span class="cc-label cc-label-purple"><i class="ti ti-chart-dots"></i> Pattern Distribution</span>
               <span class="cc-section-sub">Top patterns in your population</span>
             </div>
             <div class="card">
               <div id="ov-pattern-dist">
-                <div class="empty" style="padding:20px;font-size:12px;">No pattern data yet</div>
+                <div class="empty" style="padding:16px;font-size:12px;">No pattern data yet</div>
               </div>
             </div>
           </div>
@@ -857,17 +860,25 @@ select.form-input{cursor:pointer;}
       <!-- VALIDATION DASHBOARD -->
       <div class="screen" id="screen-validation">
 
-        <!-- Header bar -->
-        <div class="cc-section-header" style="margin-bottom:14px;">
+        <!-- Header bar + Grade filter -->
+        <div class="cc-section-header" style="margin-bottom:14px;flex-wrap:wrap;gap:10px;">
           <span class="cc-label cc-label-purple"><i class="ti ti-flask"></i> Assessment Validation — Engine Refinement</span>
           <span class="cc-section-sub">First 100 assessments · Pattern accuracy + outcome tracking</span>
+          <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+            <span style="font-size:10px;color:var(--text-muted);">Grade filter:</span>
+            <button class="grade-btn active" onclick="setValidationGrade(this,'all')">All</button>
+            <button class="grade-btn" onclick="setValidationGrade(this,'A')" style="border-color:#3B6D11;color:#3B6D11;">A — Deep reader</button>
+            <button class="grade-btn" onclick="setValidationGrade(this,'B')" style="border-color:#854F0B;color:#854F0B;">B — Engaged</button>
+            <button class="grade-btn" onclick="setValidationGrade(this,'C')" style="border-color:#185FA5;color:#185FA5;">C — Rushed</button>
+            <button class="grade-btn" onclick="setValidationGrade(this,'D')" style="border-color:#993C1D;color:#993C1D;">D — Noise</button>
+          </div>
         </div>
 
         <!-- Progress tracker -->
         <div class="card" style="margin-bottom:14px;">
           <div class="cc-stat-grid-5" style="margin-bottom:14px;">
             <div class="cc-stat"><div class="cc-stat-val" id="vl-total">—</div><div class="cc-stat-lbl">Assessments</div></div>
-            <div class="cc-stat"><div class="cc-stat-val" id="vl-pattern-engine">—</div><div class="cc-stat-lbl">Pattern Engine</div></div>
+            <div class="cc-stat" onclick="showPatternEngineLeads()" style="cursor:pointer;" title="Click to see leads with pattern data"><div class="cc-stat-val" id="vl-pattern-engine" style="color:var(--purple-text);">—</div><div class="cc-stat-lbl">Pattern Engine ↗</div></div>
             <div class="cc-stat"><div class="cc-stat-val" id="vl-high-conf">—</div><div class="cc-stat-lbl">High Confidence</div></div>
             <div class="cc-stat"><div class="cc-stat-val" id="vl-booked">—</div><div class="cc-stat-lbl">Calls Booked</div></div>
             <div class="cc-stat"><div class="cc-stat-val" id="vl-converted">—</div><div class="cc-stat-lbl">Converted</div></div>
@@ -1099,6 +1110,16 @@ select.form-input{cursor:pointer;}
         </div>
       </div>
 
+        <!-- Lead Clinical Insight Panel -->
+        <div class="intel-card" id="lp-clinical-insight" style="display:none;">
+          <div class="intel-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Pre-call Clinical Brief — Claude API</span>
+            <span style="font-size:10px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">generated for this lead</span>
+          </div>
+          <div id="lp-clinical-loading" class="cc-insight-loading"><i class="ti ti-loader cc-spin"></i> Analysing layer data + cascade risks...</div>
+          <div id="lp-clinical-content" style="display:none;"></div>
+        </div>
+
     </div>
   </div>
 </div>
@@ -1287,7 +1308,7 @@ async function loadOverview() {
       topbarRight.insertAdjacentHTML('afterbegin', alertHtml);
     }
 
-    queueEl.innerHTML = attentionLeads.map(l => {
+    const renderAQRow = l => {
       const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
       const daysSince = l.last_contacted_at
         ? Math.floor((now - new Date(l.last_contacted_at)) / 86400000)
@@ -1309,7 +1330,15 @@ async function loadOverview() {
         </div>
         <span class="aq-tag ${tagClass}">${tagLabel}</span>
       </div>`;
-    }).join('');
+    };
+    const top5 = attentionLeads.slice(0, 5);
+    const restQ = attentionLeads.slice(5);
+    let qHtml = top5.map(renderAQRow).join('');
+    if (restQ.length) {
+      qHtml += `<div id="ov-queue-rest" style="display:none;">${restQ.map(renderAQRow).join('')}</div>`;
+      qHtml += `<div style="text-align:center;padding-top:6px;font-size:11px;color:var(--accent);cursor:pointer;" onclick="const r=document.getElementById('ov-queue-rest');r.style.display=r.style.display==='none'?'block':'none';this.textContent=r.style.display==='none'?'+ ${restQ.length} more':'Show less'">+ ${restQ.length} more</div>`;
+    }
+    queueEl.innerHTML = qHtml;
   }
 
   // ② Population Snapshot
@@ -1411,6 +1440,29 @@ async function loadOverview() {
 
   // ⑥ Coach Insight — Claude API
   await loadCoachInsight(allLeadsData);
+}
+
+// ── Validation grade filter ─────────────────────────────────────
+let currentValidationGrade = 'all';
+function setValidationGrade(btn, grade) {
+  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentValidationGrade = grade;
+  loadValidation();
+}
+
+// ── Queue toggle ────────────────────────────────────────────────
+function toggleQueueMore() {
+  const hidden = document.getElementById('ov-queue-hidden');
+  const btn = document.getElementById('ov-queue-more');
+  if (!hidden || !btn) return;
+  if (hidden.style.display === 'none') {
+    hidden.style.display = 'block';
+    btn.textContent = 'Show less ↑';
+  } else {
+    hidden.style.display = 'none';
+    btn.textContent = btn.textContent.replace('Show less', 'Show') + ' more →';
+  }
 }
 
 // ── Claude API — Coach Insight ──────────────────────────────────
@@ -1745,10 +1797,20 @@ async function openLeadProfile(id) {
   const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
   const layerKeys = ['layer1_score','layer2_score','layer3_score','layer4_score','layer5_score'];
   document.getElementById('lp-layers').innerHTML = layerKeys.map((k, i) => {
-    const val = lead[k] || 0;
+    const raw = lead[k] || 0;
+    const pct = Math.round((raw / 20) * 100);
+    const color = layerColor(pct);
+    const impactLabel = pct <= 45 ? 'High Impact' : pct <= 65 ? 'Moderate Impact' : 'Maintain';
+    const impactCls = pct <= 45 ? 'imp-high' : pct <= 65 ? 'imp-mod' : 'imp-low';
     return `<div class="lbar">
-      <div class="ll"><strong>Layer ${i+1} — ${layerNames[i]}</strong><span>${val}%</span></div>
-      <div class="bt"><div class="bf" style="width:${val}%;background:${layerColor(val)};"></div></div>
+      <div class="ll">
+        <strong>Layer ${i+1} — ${layerNames[i]}</strong>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-weight:600;color:${color};">${raw}/20</span>
+          <span class="impact-badge ${impactCls}">${impactLabel}</span>
+        </div>
+      </div>
+      <div class="bt"><div class="bf" style="width:${pct}%;background:${color};"></div></div>
     </div>`;
   }).join('');
 
@@ -1812,16 +1874,16 @@ async function openLeadProfile(id) {
 
   // ── Pattern Brief in status panel
   const patternBriefs = {
-    'Metabolic Resistance Pattern': 'This person's metabolism has adapted defensively — weight loss attempts have likely stalled or reversed. Lead with insulin sensitivity and cortisol dysregulation. Avoid caloric restriction framing.',
-    'Cortisol Dominant': 'High cortisol is driving fat storage and suppressing recovery. This person is likely high-functioning but exhausted. Lead with nervous system, not willpower.',
-    'Gut-Brain Disconnect': 'Gut signals are not reaching the brain accurately — hunger, fullness, and mood cues are disrupted. Microbiome and vagal nerve tone are key entry points.',
-    'Circadian Disruption Pattern': 'Sleep-wake disruption is upstream of most symptoms. Metabolic, hormonal, and cognitive function are all impacted. Circadian anchoring is the first intervention.',
-    'System-Wide Adaptation Deficit': 'Multiple systems are under load simultaneously — this person cannot adapt fast enough. Protocol must sequence: stabilise, then optimise.',
-    'Recovery Deficit': 'Recovery capacity is the bottleneck. Training harder or eating less will worsen outcomes. Parasympathetic restoration is the priority.',
-    'Nervous System Overload': 'The nervous system is in chronic sympathetic dominance. Standard protocols will not work until this is addressed. Lead with regulation, not performance.',
-    'Fuel Regulation Bottleneck': 'Glucose and fat switching is impaired — this person runs on glucose and cannot access fat stores efficiently. Metabolic flexibility is the core intervention.',
-    'Behavioral Recovery Gap': 'There is a gap between what this person knows and what they can sustain behaviourally. The protocol must account for nervous system state, not just information.',
-    'Single System Bottleneck': 'One primary system is driving dysfunction. Targeted intervention here can produce rapid improvement. Identify and address the bottleneck directly.'
+    'Metabolic Resistance Pattern': "This person's metabolism has adapted defensively. Weight loss attempts have likely stalled or reversed. Lead with insulin sensitivity and cortisol dysregulation.",
+    'Cortisol Dominant': "High cortisol is driving fat storage and suppressing recovery. This person is likely high-functioning but exhausted. Lead with nervous system, not willpower.",
+    'Gut-Brain Disconnect': "Gut signals are not reaching the brain accurately — hunger, fullness, and mood cues are disrupted. Microbiome and vagal nerve tone are key entry points.",
+    'Circadian Disruption Pattern': "Sleep-wake disruption is upstream of most symptoms. Metabolic, hormonal, and cognitive function are all impacted. Circadian anchoring is the first intervention.",
+    'System-Wide Adaptation Deficit': "Multiple systems are under load simultaneously — this person cannot adapt fast enough. Protocol must sequence: stabilise, then optimise.",
+    'Recovery Deficit': "Recovery capacity is the bottleneck. Training harder or eating less will worsen outcomes. Parasympathetic restoration is the priority.",
+    'Nervous System Overload': "The nervous system is in chronic sympathetic dominance. Standard protocols will not work until this is addressed. Lead with regulation, not performance.",
+    'Fuel Regulation Bottleneck': "Glucose and fat switching is impaired — this person runs on glucose and cannot access fat stores efficiently. Metabolic flexibility is the core intervention.",
+    'Behavioral Recovery Gap': "There is a gap between what this person knows and what they can sustain behaviourally. The protocol must account for nervous system state, not just information.",
+    'Single System Bottleneck': "One primary system is driving dysfunction. Targeted intervention here can produce rapid improvement. Identify and address the bottleneck directly."
   };
   const briefEl = document.getElementById('lp-pattern-brief');
   const briefContent = document.getElementById('lp-pattern-brief-content');
@@ -1838,6 +1900,109 @@ async function openLeadProfile(id) {
     briefContent.style.color = clrMap[m.cls] || 'var(--danger-text)';
   } else {
     briefEl.style.display = 'none';
+  }
+
+  // ── Lead-level Clinical Insight — Claude API (items 12+13)
+  await loadLeadClinicalInsight(lead);
+}
+
+// ── Lead Clinical Insight — cascade-aware pre-call brief ──────
+async function loadLeadClinicalInsight(lead) {
+  const el = document.getElementById('lp-clinical-insight');
+  const loadEl = document.getElementById('lp-clinical-loading');
+  const contentEl = document.getElementById('lp-clinical-content');
+  if (!el || !loadEl || !contentEl) return;
+
+  el.style.display = 'block';
+  loadEl.style.display = 'block';
+  contentEl.style.display = 'none';
+
+  const layerNames = ['Circadian','Neurochemical','Metabolic','Gut-Brain','Identity'];
+  const layers = [1,2,3,4,5].map(i => ({
+    name: layerNames[i-1],
+    score: lead[`layer${i}_score`],
+    outOf: 20
+  })).filter(l => l.score != null);
+
+  const weakest = layers.length ? layers.reduce((a,b) => a.score < b.score ? a : b) : null;
+
+  // Cascade logic
+  const cascadeRisks = [];
+  const l1=lead.layer1_score,l2=lead.layer2_score,l3=lead.layer3_score,l4=lead.layer4_score,l5=lead.layer5_score;
+  if(l1 != null && l1 < 10) cascadeRisks.push('L1 Circadian failure driving cortisol elevation → L2 Neurochemical at risk');
+  if(l2 != null && l2 < 8) cascadeRisks.push('L2 Neurochemical compromised → L4 Gut-Brain and L5 Identity at risk');
+  if(l3 != null && l4 != null && l3 < 8 && l4 < 10) cascadeRisks.push('L3+L4 feedback loop — insulin resistance + gut inflammation reinforcing each other');
+  if(l4 != null && l4 < 8) cascadeRisks.push('L4 severely compromised → depleting L2 serotonin via gut-brain axis');
+
+  const prompt = `You are Amit Baruna — a Metabolic Diagnostic & GLP-1 specialist. You are reviewing a lead's assessment data before a discovery call. Generate a pre-call clinical brief.
+
+LEAD DATA:
+- Gender: ${lead.gender || 'Unknown'}, Age: ${lead.age_range || 'Unknown'}
+- Metabolic score: ${lead.metabolic_score || '?'}/100
+- Layer scores (out of 20): ${layers.map(l => `${l.name}: ${l.score}/20`).join(', ')}
+- Weakest layer: ${weakest ? `${weakest.name} at ${weakest.score}/20` : 'Unknown'}
+- Dominant pattern: ${lead.dominant_pattern || 'Not assigned'} (${lead.dominant_pattern_confidence || '?'}% confidence)
+- Stress Load (SLI): ${lead.stress_load_index || '?'}/12 — ${lead.stress_load_classification || ''}
+- Resilience (BRI): ${lead.behavioral_resilience_index || '?'}/12 — ${lead.behavioral_resilience_classification || ''}
+- Glucose Stability (GSI): ${lead.glucose_stability_index || '?'}/12 — ${lead.glucose_stability_classification || ''}
+- System Load (SYLI): ${lead.system_load_index || '?'}/5 — ${lead.system_load_classification || ''}
+- Sleep self-rating: ${lead.sleep_self_rating || '?'}/10
+- Stress self-rating: ${lead.stress_self_rating || '?'}/10
+- Gut self-rating: ${lead.gut_self_rating || '?'}/10
+- Sleep alignment gap: ${lead.sleep_alignment || '?'} (positive = overestimates)
+- Stress alignment gap: ${lead.stress_alignment || '?'}
+- Gut alignment gap: ${lead.gut_alignment || '?'}
+- Medical conditions: ${lead.flags || 'None'}
+- Cascade risks: ${cascadeRisks.length ? cascadeRisks.join(' | ') : 'None detected'}
+
+Generate exactly 3 clinical insights as JSON array. Each insight must have: type (warn/positive/info), title (4-5 words max), text (2 sentences max, direct and specific to THIS person's data).
+
+Rules:
+- Identify the PRIMARY driver (what is causing the worst layer to fail)
+- Name the specific neurochemical or physiological mechanism involved
+- Tell me what to lead with on the call and what to avoid saying
+- Use cascade data to predict what will fail next if untreated
+- Sound like a diagnostician, not a report
+
+Return JSON only. No preamble.`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || data.narrative || '[]';
+    const clean = raw.replace(/```json|```/g, '').trim();
+
+    let insights;
+    try { insights = JSON.parse(clean); } catch(e) {
+      // Worker returns narrative format — wrap it
+      insights = [{ type: 'info', title: 'Clinical brief', text: clean.slice(0, 300) }];
+    }
+
+    const iconMap = { warn: 'ti-alert-triangle', positive: 'ti-trending-up', info: 'ti-bulb' };
+    const classMap = { warn: 'cc-insight-warn', positive: 'cc-insight-pos', info: 'cc-insight-info' };
+
+    contentEl.innerHTML = insights.map(ins => `
+      <div class="cc-insight-item ${classMap[ins.type] || 'cc-insight-info'}" style="margin-bottom:8px;">
+        <i class="ti ${iconMap[ins.type] || 'ti-bulb'}" style="font-size:13px;flex-shrink:0;margin-top:1px;"></i>
+        <div>
+          <div style="font-size:11px;font-weight:600;margin-bottom:2px;">${ins.title || ''}</div>
+          <div style="font-size:11px;line-height:1.5;">${ins.text}</div>
+        </div>
+      </div>`).join('');
+
+    loadEl.style.display = 'none';
+    contentEl.style.display = 'block';
+  } catch(e) {
+    loadEl.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">Brief unavailable</span>';
+    console.error('Clinical insight error:', e);
   }
 }
 
@@ -2030,13 +2195,46 @@ async function savePlan() {
   }
 }
 
+// ── Pattern Engine Leads popup ────────────────────────────────
+function showPatternEngineLeads() {
+  const patterned = allLeads.filter(l => l.dominant_pattern);
+  if (patterned.length === 0) { showToast('No leads with pattern data yet'); return; }
+  const list = patterned.map(l =>
+    `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);cursor:pointer;" onclick="openLeadProfile(${l.id})">
+      <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;">${l.name || '—'}</div>
+        <div style="font-size:11px;color:var(--text-muted);">${getPatternMeta(l.dominant_pattern).short} · ${l.dominant_pattern_confidence || '?'}% confidence</div>
+      </div>
+    </div>`
+  ).join('');
+  // Show as toast-style overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `<div style="background:var(--surface);border-radius:var(--radius-lg);padding:20px;width:400px;max-height:500px;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">Pattern Engine — ${patterned.length} leads scored</div>
+      <span style="cursor:pointer;font-size:18px;color:var(--text-muted);" onclick="this.closest('[style*=fixed]').remove()">×</span>
+    </div>
+    ${list}
+  </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
 // ── Validation Dashboard ──────────────────────────────────────
 async function loadValidation() {
   const leads = await db('/rest/v1/leads?select=*&order=created_at.desc');
   const allLeadsData = leads || [];
 
   // Progress stats
-  const patternEngineLeads = allLeadsData.filter(l => l.dominant_pattern);
+  // Apply grade filter
+  const filteredLeads = currentValidationGrade === 'all'
+    ? allLeadsData
+    : allLeadsData.filter(l => l.engagement_grade === currentValidationGrade);
+  const leadsForValidation = filteredLeads;
+
+  const patternEngineLeads = leadsForValidation.filter(l => l.dominant_pattern);
   const highConfLeads = allLeadsData.filter(l => l.dominant_pattern_confidence != null && l.dominant_pattern_confidence >= 75);
   const bookedLeads = allLeadsData.filter(l => l.booking_date);
   const convertedLeads = allLeadsData.filter(l => l.status === 'converted');
@@ -2720,7 +2918,7 @@ function signOut() {
 // ── Init ───────────────────────────────────────────────────────
 async function init() {
   document.getElementById('topbar-title').textContent = 'Metabolic Intelligence Command Center';
-  await loadOverview();
+  await Promise.all([loadOverview(), loadClients()]);
 }
 
 init();
