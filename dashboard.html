@@ -537,11 +537,17 @@ select.form-input{cursor:pointer;}
               <span class="cc-section-sub" id="ov-insight-time"></span>
             </div>
             <div class="card" id="ov-insight-card">
-              <div class="cc-insight-loading" id="ov-insight-loading">
+              <div class="cc-insight-loading" id="ov-insight-loading" style="display:none;">
                 <i class="ti ti-loader cc-spin"></i> Generating insight...
               </div>
               <div id="ov-insight-content" style="display:none;"></div>
-              <button class="cc-refresh-btn" onclick="loadCoachInsight()" title="Refresh insight"><i class="ti ti-refresh"></i></button>
+              <div id="ov-insight-empty" style="padding:16px;text-align:center;">
+                <button class="cc-refresh-btn" style="position:static;display:inline-flex;gap:6px;padding:8px 14px;" onclick="loadCoachInsight()">
+                  <i class="ti ti-sparkles"></i> Generate insight
+                </button>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Uses Claude API — generated only when you click</div>
+              </div>
+              <button class="cc-refresh-btn" onclick="loadCoachInsight()" title="Refresh insight" style="display:none;" id="ov-insight-refresh-btn"><i class="ti ti-refresh"></i></button>
             </div>
           </div>
         </div>
@@ -937,13 +943,19 @@ select.form-input{cursor:pointer;}
           <div>
             <div class="cc-section-header">
               <span class="cc-label cc-label-green"><i class="ti ti-brain"></i> Emerging Insights</span>
-              <span class="cc-section-sub">Claude API · updates on load</span>
+              <span class="cc-section-sub" id="vl-insight-time">Claude API · generated on demand</span>
             </div>
             <div class="card" id="vl-insight-card">
-              <div class="cc-insight-loading" id="vl-insight-loading">
+              <div class="cc-insight-loading" id="vl-insight-loading" style="display:none;">
                 <i class="ti ti-loader cc-spin"></i> Analysing patterns...
               </div>
               <div id="vl-insight-content" style="display:none;"></div>
+              <div id="vl-insight-empty" style="padding:16px;text-align:center;">
+                <button class="cc-refresh-btn" style="position:static;display:inline-flex;gap:6px;padding:8px 14px;" onclick="loadValidationInsights(window._lastValidationLeads, window._lastPatAccData, window._lastLayerRecData)">
+                  <i class="ti ti-sparkles"></i> Generate insight
+                </button>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Uses Claude API — generated only when you click</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1110,14 +1122,29 @@ select.form-input{cursor:pointer;}
         </div>
       </div>
 
+        <!-- NARRATIVE REVIEW — N1/N2/N3 with ratings + approve/refine + feedback -->
+        <div class="intel-card" id="lp-narrative-review" style="display:none;">
+          <div class="intel-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Narrative Review — What this person actually saw</span>
+            <span id="lp-nps-display" style="font-size:11px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;"></span>
+          </div>
+          <div id="lp-narrative-blocks"></div>
+        </div>
+
         <!-- Lead Clinical Insight Panel -->
         <div class="intel-card" id="lp-clinical-insight" style="display:none;">
           <div class="intel-card-title" style="display:flex;align-items:center;justify-content:space-between;">
             <span>Pre-call Clinical Brief — Claude API</span>
             <span style="font-size:10px;color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">generated for this lead</span>
           </div>
-          <div id="lp-clinical-loading" class="cc-insight-loading"><i class="ti ti-loader cc-spin"></i> Analysing layer data + cascade risks...</div>
+          <div id="lp-clinical-loading" class="cc-insight-loading" style="display:none;"><i class="ti ti-loader cc-spin"></i> Analysing layer data + cascade risks...</div>
           <div id="lp-clinical-content" style="display:none;"></div>
+          <div id="lp-clinical-empty" style="padding:16px;text-align:center;">
+            <button class="cc-refresh-btn" style="position:static;display:inline-flex;gap:6px;padding:8px 14px;" onclick="loadLeadClinicalInsight(allLeads.find(l=>l.id===currentLeadId))">
+              <i class="ti ti-sparkles"></i> Generate clinical brief
+            </button>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Uses Claude API — generated only when you click</div>
+          </div>
         </div>
 
     </div>
@@ -1438,8 +1465,7 @@ async function loadOverview() {
     }).join('');
   }
 
-  // ⑥ Coach Insight — Claude API
-  await loadCoachInsight(allLeadsData);
+  // ⑥ Coach Insight — Claude API (manual trigger only, see Generate button)
 }
 
 // ── Validation grade filter ─────────────────────────────────────
@@ -1469,8 +1495,11 @@ function toggleQueueMore() {
 async function loadCoachInsight(leadsData) {
   const loadEl = document.getElementById('ov-insight-loading');
   const contentEl = document.getElementById('ov-insight-content');
+  const emptyEl = document.getElementById('ov-insight-empty');
+  const refreshBtn = document.getElementById('ov-insight-refresh-btn');
   if (!loadEl || !contentEl) return;
 
+  if (emptyEl) emptyEl.style.display = 'none';
   loadEl.style.display = 'block';
   contentEl.style.display = 'none';
 
@@ -1535,6 +1564,7 @@ Generate exactly 3 short coaching insights (1-2 sentences each). Each should be 
     document.getElementById('ov-insight-time').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
     loadEl.style.display = 'none';
     contentEl.style.display = 'block';
+    if (refreshBtn) refreshBtn.style.display = 'block';
   } catch (e) {
     loadEl.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">Insight unavailable — check API key</span>';
     console.error('Claude API error:', e);
@@ -1902,8 +1932,78 @@ async function openLeadProfile(id) {
     briefEl.style.display = 'none';
   }
 
-  // ── Lead-level Clinical Insight — Claude API (items 12+13)
-  await loadLeadClinicalInsight(lead);
+  // ── Narrative Review — N1/N2/N3 with ratings + approve/refine + feedback
+  renderNarrativeReview(lead);
+
+  // ── Lead-level Clinical Insight — manual trigger only, see Generate button
+  const clinicalPanel = document.getElementById('lp-clinical-insight');
+  if (clinicalPanel) clinicalPanel.style.display = 'block';
+}
+
+// ── Narrative Review — N1/N2/N3 display + ratings + approve/refine ─
+function renderNarrativeReview(lead) {
+  const panel = document.getElementById('lp-narrative-review');
+  const blocksEl = document.getElementById('lp-narrative-blocks');
+  const npsEl = document.getElementById('lp-nps-display');
+  if (!panel || !blocksEl) return;
+
+  const hasAnyNarrative = lead.n1_text || lead.n2_text || lead.n3_text;
+  panel.style.display = hasAnyNarrative ? 'block' : 'none';
+  if (!hasAnyNarrative) return;
+
+  npsEl.textContent = lead.nps_rating != null ? `NPS: ${lead.nps_rating}/5` : 'NPS: not given';
+
+  const narratives = [
+    { key: 'n1', label: 'N1 — Fat Loss Readiness', text: lead.n1_text, status: lead.n1_status, feedback: lead.n1_feedback, rating: null },
+    { key: 'n2', label: 'N2 — Mechanism', text: lead.n2_text, status: lead.n2_status, feedback: lead.n2_feedback, rating: lead.recognition_rate != null ? `Clarity: ${lead.recognition_rate}/10` : null },
+    { key: 'n3', label: 'N3 — Where to Begin', text: lead.n3_text, status: lead.n3_status, feedback: lead.n3_feedback, rating: lead.hope_score != null ? `Hope: ${lead.hope_score}/10` : null }
+  ];
+
+  blocksEl.innerHTML = narratives.filter(n => n.text).map(n => `
+    <div style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:600;">${n.label}</span>
+        ${n.rating ? `<span style="font-size:11px;color:var(--text-muted);">${n.rating}</span>` : ''}
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:8px;padding:10px;margin-bottom:10px;">${n.text}</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="grade-btn ${n.status === 'approved' ? 'active' : ''}" style="border-color:#3B6D11;color:#3B6D11;" onclick="setNarrativeStatus('${n.key}','approved')">✓ Approve</button>
+        <button class="grade-btn ${n.status === 'needs_refinement' ? 'active' : ''}" style="border-color:#993C1D;color:#993C1D;" onclick="setNarrativeStatus('${n.key}','needs_refinement')">✎ Needs Refinement</button>
+      </div>
+      <textarea class="form-input" id="lp-feedback-${n.key}" rows="3" placeholder="Your feedback — how should this have been said instead?" style="font-size:12px;margin-bottom:6px;">${n.feedback || ''}</textarea>
+      <button class="cc-refresh-btn" style="position:static;display:inline-flex;gap:6px;padding:6px 12px;font-size:11px;" onclick="saveNarrativeFeedback('${n.key}')"><i class="ti ti-device-floppy"></i> Save feedback</button>
+    </div>
+  `).join('');
+}
+
+async function setNarrativeStatus(key, status) {
+  if (!currentLeadId) return;
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ [`${key}_status`]: status })
+    });
+    const lead = allLeads.find(l => l.id === currentLeadId);
+    if (lead) { lead[`${key}_status`] = status; renderNarrativeReview(lead); }
+    showToast('Saved');
+  } catch (e) { showToast('Failed to save'); }
+}
+
+async function saveNarrativeFeedback(key) {
+  if (!currentLeadId) return;
+  const ta = document.getElementById(`lp-feedback-${key}`);
+  if (!ta) return;
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ [`${key}_feedback`]: ta.value })
+    });
+    const lead = allLeads.find(l => l.id === currentLeadId);
+    if (lead) lead[`${key}_feedback`] = ta.value;
+    showToast('Feedback saved');
+  } catch (e) { showToast('Failed to save feedback'); }
 }
 
 // ── Lead Clinical Insight — cascade-aware pre-call brief ──────
@@ -1911,9 +2011,11 @@ async function loadLeadClinicalInsight(lead) {
   const el = document.getElementById('lp-clinical-insight');
   const loadEl = document.getElementById('lp-clinical-loading');
   const contentEl = document.getElementById('lp-clinical-content');
-  if (!el || !loadEl || !contentEl) return;
+  const emptyEl = document.getElementById('lp-clinical-empty');
+  if (!el || !loadEl || !contentEl || !lead) return;
 
   el.style.display = 'block';
+  if (emptyEl) emptyEl.style.display = 'none';
   loadEl.style.display = 'block';
   contentEl.style.display = 'none';
 
@@ -2235,19 +2337,19 @@ async function loadValidation() {
   const leadsForValidation = filteredLeads;
 
   const patternEngineLeads = leadsForValidation.filter(l => l.dominant_pattern);
-  const highConfLeads = allLeadsData.filter(l => l.dominant_pattern_confidence != null && l.dominant_pattern_confidence >= 75);
-  const bookedLeads = allLeadsData.filter(l => l.booking_date);
-  const convertedLeads = allLeadsData.filter(l => l.status === 'converted');
+  const highConfLeads = leadsForValidation.filter(l => l.dominant_pattern_confidence != null && l.dominant_pattern_confidence >= 75);
+  const bookedLeads = leadsForValidation.filter(l => l.booking_date);
+  const convertedLeads = leadsForValidation.filter(l => l.status === 'converted');
 
-  document.getElementById('vl-total').textContent = allLeadsData.length;
+  document.getElementById('vl-total').textContent = leadsForValidation.length;
   document.getElementById('vl-pattern-engine').textContent = patternEngineLeads.length;
   document.getElementById('vl-high-conf').textContent = highConfLeads.length;
   document.getElementById('vl-booked').textContent = bookedLeads.length;
   document.getElementById('vl-converted').textContent = convertedLeads.length;
 
-  const pct = Math.min(100, Math.round((allLeadsData.length / 100) * 100));
+  const pct = Math.min(100, Math.round((leadsForValidation.length / 100) * 100));
   document.getElementById('vl-progress-fill').style.width = pct + '%';
-  document.getElementById('vl-progress-label').textContent = `${allLeadsData.length} / 100 assessments`;
+  document.getElementById('vl-progress-label').textContent = `${leadsForValidation.length} / 100 assessments`;
 
   // ── Pattern Accuracy (recognition_rate by dominant_pattern)
   const patternRecog = {};
@@ -2350,8 +2452,11 @@ async function loadValidation() {
     `<div class="vl-combo-row"><span class="vl-combo-name">${name}</span><span class="vl-combo-cnt">${cnt}×</span></div>`
   ).join('') : '<div class="empty" style="padding:16px;font-size:12px;">Need more index data</div>';
 
-  // ── Emerging Insights via Claude API
-  await loadValidationInsights(allLeadsData, patAccData, layerRecData);
+  // ── Emerging Insights — manual trigger only; cache data for the Generate button
+  window._lastValidationLeads = allLeadsData;
+  window._lastPatAccData = patAccData;
+  window._lastLayerRecData = layerRecData;
+  allLeads = allLeadsData;
 
   // ── OUTCOME INTELLIGENCE ──────────────────────────────────────
 
@@ -2486,8 +2591,11 @@ async function loadValidation() {
 async function loadValidationInsights(leads, patAccData, layerRecData) {
   const loadEl = document.getElementById('vl-insight-loading');
   const contentEl = document.getElementById('vl-insight-content');
+  const emptyEl = document.getElementById('vl-insight-empty');
   if (!loadEl || !contentEl) return;
+  if (!leads || !patAccData || !layerRecData) return;
 
+  if (emptyEl) emptyEl.style.display = 'none';
   loadEl.style.display = 'block';
   contentEl.style.display = 'none';
 
@@ -2528,6 +2636,8 @@ Generate exactly 3 insights for improving the assessment engine. Each should tel
       </div>`).join('');
     loadEl.style.display = 'none';
     contentEl.style.display = 'block';
+    const timeEl = document.getElementById('vl-insight-time');
+    if (timeEl) timeEl.textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
   } catch(e) {
     loadEl.innerHTML = '<span style="font-size:11px;color:var(--text-muted);">Insight unavailable — check API key</span>';
   }
