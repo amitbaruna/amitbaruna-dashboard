@@ -457,7 +457,10 @@ select.form-input{cursor:pointer;}
   <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Good morning, Amit</div>
+      <div style="display:flex;align-items:center;">
+        <div class="topbar-title" id="topbar-title">Good morning, Amit</div>
+        <span id="topbar-readiness-badge" style="display:none;font-size:12px;font-weight:500;padding:3px 10px;border-radius:6px;margin-left:12px;"></span>
+      </div>
       <div class="topbar-right">
         <i class="ti ti-bell" style="font-size:18px;color:var(--text-muted);cursor:pointer;"></i>
         <div class="topbar-avatar">AB</div>
@@ -1202,6 +1205,10 @@ function goScreen(name) {
   currentScreen = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (name !== 'lead-profile') {
+    const badge = document.getElementById('topbar-readiness-badge');
+    if (badge) badge.style.display = 'none';
+  }
   const screen = document.getElementById('screen-' + name);
   if (screen) screen.classList.add('active');
   const navItem = document.querySelector(`[data-screen="${name}"]`);
@@ -1807,6 +1814,25 @@ async function openLeadProfile(id) {
 
   const lead = allLeads.find(l => l.id === id) || await db(`/rest/v1/leads?id=eq.${id}&select=*`).then(r => r && r[0]);
   if (!lead) return;
+
+  // ── Fat Loss Readiness badge (topbar) ──
+  const readinessBadge = document.getElementById('topbar-readiness-badge');
+  if (readinessBadge) {
+    const rPct = lead.fat_loss_readiness_pct;
+    if (rPct == null) {
+      readinessBadge.style.display = 'none';
+    } else {
+      let bg, color, label;
+      if (rPct >= 70) { bg = 'var(--color-background-success)'; color = 'var(--color-text-success)'; label = `${rPct}% Ready`; }
+      else if (rPct >= 51) { bg = 'var(--color-background-warning)'; color = 'var(--color-text-warning)'; label = `${rPct}% Ready — Moderate`; }
+      else if (rPct >= 30) { bg = 'var(--color-background-danger)'; color = 'var(--color-text-danger)'; label = `${rPct}% Ready — ${100-rPct}% Compromised`; }
+      else { bg = '#7A1F1F'; color = '#FFFFFF'; label = `${rPct}% Ready — ${100-rPct}% Compromised`; }
+      readinessBadge.style.background = bg;
+      readinessBadge.style.color = color;
+      readinessBadge.textContent = label;
+      readinessBadge.style.display = 'inline-block';
+    }
+  }
 
   const av = document.getElementById('lp-av');
   av.className = `profile-av ${avColor(lead.name)}`;
