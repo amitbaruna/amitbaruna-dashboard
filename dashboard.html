@@ -1941,6 +1941,14 @@ async function openLeadProfile(id) {
 }
 
 // ── Narrative Review — N1/N2/N3 display + ratings + approve/refine ─
+function ratingColor(value, max) {
+  if (value == null) return null;
+  const pct = value / max;
+  if (pct <= 0.4) return { bg: 'var(--color-background-danger)', text: 'var(--color-text-danger)' };
+  if (pct <= 0.7) return { bg: 'var(--color-background-warning)', text: 'var(--color-text-warning)' };
+  return { bg: 'var(--color-background-success)', text: 'var(--color-text-success)' };
+}
+
 function renderNarrativeReview(lead) {
   const panel = document.getElementById('lp-narrative-review');
   const blocksEl = document.getElementById('lp-narrative-blocks');
@@ -1951,29 +1959,49 @@ function renderNarrativeReview(lead) {
   panel.style.display = hasAnyNarrative ? 'block' : 'none';
   if (!hasAnyNarrative) return;
 
-  npsEl.textContent = lead.nps_rating != null ? `NPS: ${lead.nps_rating}/5` : 'NPS: not given';
+  if (npsEl) npsEl.textContent = '';
 
   const narratives = [
-    { key: 'n1', label: 'N1 — Fat Loss Readiness', text: lead.n1_text, status: lead.n1_status, feedback: lead.n1_feedback, rating: null },
-    { key: 'n2', label: 'N2 — Mechanism', text: lead.n2_text, status: lead.n2_status, feedback: lead.n2_feedback, rating: lead.recognition_rate != null ? `Clarity: ${lead.recognition_rate}/10` : null },
-    { key: 'n3', label: 'N3 — Where to Begin', text: lead.n3_text, status: lead.n3_status, feedback: lead.n3_feedback, rating: lead.hope_score != null ? `Hope: ${lead.hope_score}/10` : null }
+    { key: 'n1', label: 'N1 — Fat Loss Readiness', text: lead.n1_text, status: lead.n1_status, feedback: lead.n1_feedback, ratingLabel: null, ratingVal: null, ratingMax: null },
+    { key: 'n2', label: 'N2 — Mechanism', text: lead.n2_text, status: lead.n2_status, feedback: lead.n2_feedback, ratingLabel: 'Clarity', ratingVal: lead.recognition_rate, ratingMax: 10 },
+    { key: 'n3', label: 'N3 — Where to Begin', text: lead.n3_text, status: lead.n3_status, feedback: lead.n3_feedback, ratingLabel: 'Hope', ratingVal: lead.hope_score, ratingMax: 10 }
   ];
 
-  blocksEl.innerHTML = narratives.filter(n => n.text).map(n => `
-    <div style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:600;">${n.label}</span>
-        ${n.rating ? `<span style="font-size:11px;color:var(--text-muted);">${n.rating}</span>` : ''}
-      </div>
-      <div style="font-size:13px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:8px;padding:10px;margin-bottom:10px;">${n.text}</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button class="grade-btn ${n.status === 'approved' ? 'active' : ''}" style="border-color:#3B6D11;color:#3B6D11;" onclick="setNarrativeStatus('${n.key}','approved')">✓ Approve</button>
-        <button class="grade-btn ${n.status === 'needs_refinement' ? 'active' : ''}" style="border-color:#993C1D;color:#993C1D;" onclick="setNarrativeStatus('${n.key}','needs_refinement')">✎ Needs Refinement</button>
-      </div>
-      <textarea class="form-input" id="lp-feedback-${n.key}" rows="3" placeholder="Your feedback — how should this have been said instead?" style="font-size:12px;margin-bottom:6px;">${n.feedback || ''}</textarea>
-      <button class="cc-refresh-btn" style="position:static;display:inline-flex;gap:6px;padding:6px 12px;font-size:11px;" onclick="saveNarrativeFeedback('${n.key}')"><i class="ti ti-device-floppy"></i> Save feedback</button>
+  blocksEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:16px;">
+      ${narratives.filter(n => n.text).map(n => {
+        const col = ratingColor(n.ratingVal, n.ratingMax);
+        return `
+        <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.1rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
+            <span style="font-size:13px;font-weight:500;">${n.label}</span>
+            ${col ? `<span style="font-size:11px;font-weight:500;background:${col.bg};color:${col.text};padding:3px 8px;border-radius:var(--border-radius-md);white-space:nowrap;">${n.ratingLabel} ${n.ratingVal}/${n.ratingMax}</span>` : ''}
+          </div>
+          <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:10px;">${n.text}</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <button class="grade-btn ${n.status === 'approved' ? 'active' : ''}" style="border-color:#3B6D11;color:#3B6D11;font-size:11px;" onclick="setNarrativeStatus('${n.key}','approved')"><i class="ti ti-check" style="font-size:13px;vertical-align:-1px;" aria-hidden="true"></i> Approve</button>
+            <button class="grade-btn ${n.status === 'needs_refinement' ? 'active' : ''}" style="border-color:#993C1D;color:#993C1D;font-size:11px;" onclick="setNarrativeStatus('${n.key}','needs_refinement')"><i class="ti ti-edit" style="font-size:13px;vertical-align:-1px;" aria-hidden="true"></i> Refine</button>
+          </div>
+          <textarea class="form-input" id="lp-feedback-${n.key}" rows="3" placeholder="Your feedback — how should this have been said instead?" style="font-size:12px;margin-bottom:6px;width:100%;box-sizing:border-box;">${n.feedback || ''}</textarea>
+          <button class="cc-refresh-btn" id="lp-save-btn-${n.key}" style="position:static;display:inline-flex;gap:6px;padding:6px 12px;font-size:11px;" onclick="saveNarrativeFeedback('${n.key}')"><i class="ti ti-device-floppy"></i> Save feedback</button>
+        </div>`;
+      }).join('')}
     </div>
-  `).join('');
+    <div style="display:flex;gap:12px;">
+      <div style="flex:1;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.7rem 1rem;text-align:center;">
+        <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;">Clarity (N2)</p>
+        <p style="font-size:18px;font-weight:500;margin:0;${lead.recognition_rate != null ? `color:${ratingColor(lead.recognition_rate,10).text};` : 'color:var(--color-text-tertiary);'}">${lead.recognition_rate != null ? lead.recognition_rate + '/10' : '—'}</p>
+      </div>
+      <div style="flex:1;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.7rem 1rem;text-align:center;">
+        <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;">Hope (N3)</p>
+        <p style="font-size:18px;font-weight:500;margin:0;${lead.hope_score != null ? `color:${ratingColor(lead.hope_score,10).text};` : 'color:var(--color-text-tertiary);'}">${lead.hope_score != null ? lead.hope_score + '/10' : '—'}</p>
+      </div>
+      <div style="flex:1;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.7rem 1rem;text-align:center;">
+        <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;">NPS</p>
+        <p style="font-size:18px;font-weight:500;margin:0;${lead.nps_rating != null ? `color:${ratingColor(lead.nps_rating,5).text};` : 'color:var(--color-text-tertiary);'}">${lead.nps_rating != null ? lead.nps_rating + '/5' : '—'}</p>
+      </div>
+    </div>
+  `;
 }
 
 async function setNarrativeStatus(key, status) {
@@ -1993,6 +2021,7 @@ async function setNarrativeStatus(key, status) {
 async function saveNarrativeFeedback(key) {
   if (!currentLeadId) return;
   const ta = document.getElementById(`lp-feedback-${key}`);
+  const btn = document.getElementById(`lp-save-btn-${key}`);
   if (!ta) return;
   try {
     await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
@@ -2003,6 +2032,11 @@ async function saveNarrativeFeedback(key) {
     const lead = allLeads.find(l => l.id === currentLeadId);
     if (lead) lead[`${key}_feedback`] = ta.value;
     showToast('Feedback saved');
+    if (btn) {
+      const original = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-check" style="color:#3B6D11;"></i> Saved';
+      setTimeout(() => { if (btn) btn.innerHTML = original; }, 1800);
+    }
   } catch (e) { showToast('Failed to save feedback'); }
 }
 
