@@ -1780,11 +1780,12 @@ function renderLeads(leads, filter = 'all') {
     const flags = l.flags ? l.flags.split(',').filter(Boolean) : [];
     const isHot = flags.length >= 2;
     const hasCal = l.notes && l.notes.toLowerCase().includes('calendly');
+    const filledTime = l.created_at ? new Date(l.created_at).toLocaleString('en-IN', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
     return `<div class="row" onclick="openLeadProfile(${l.id})">
       <div class="av ${avColor(l.name)}">${initials(l.name)}</div>
       <div style="flex:1;min-width:0;">
         <div class="rname">${l.name || '—'}</div>
-        <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.join(', ') || 'No flags'} · ${l.gender || ''} · ${l.age_range || ''}</div>
+        <div class="rmeta">Score ${l.metabolic_score || '?'} · ${flags.join(', ') || 'No flags'} · ${l.gender || ''} · ${l.age_range || ''}${l.city ? ' · ' + l.city : ''} · ${filledTime}</div>
       </div>
       <div class="badges">
         ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
@@ -1839,8 +1840,9 @@ async function openLeadProfile(id) {
   av.textContent = initials(lead.name);
 
   document.getElementById('lp-name').textContent = lead.name || '—';
+  const lpFilledTime = lead.created_at ? new Date(lead.created_at).toLocaleString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
   document.getElementById('lp-meta').textContent =
-    [lead.gender, lead.age_range, lead.whatsapp ? `📱 ${lead.whatsapp}` : '', lead.email || ''].filter(Boolean).join(' · ');
+    [lead.gender, lead.age_range, lead.city, lead.whatsapp ? `📱 ${lead.whatsapp}` : '', lead.email || '', lpFilledTime ? `🕐 ${lpFilledTime}` : ''].filter(Boolean).join(' · ');
 
   const badges = document.getElementById('lp-badges');
   const flags = lead.flags ? lead.flags.split(',').filter(Boolean) : [];
