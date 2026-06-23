@@ -1824,9 +1824,9 @@ async function openLeadProfile(id) {
       readinessBadge.style.display = 'none';
     } else {
       let bg, color, label;
-      if (rPct >= 70) { bg = 'var(--color-background-success)'; color = 'var(--color-text-success)'; label = `${rPct}% Ready`; }
-      else if (rPct >= 51) { bg = 'var(--color-background-warning)'; color = 'var(--color-text-warning)'; label = `${rPct}% Ready — Moderate`; }
-      else if (rPct >= 30) { bg = 'var(--color-background-danger)'; color = 'var(--color-text-danger)'; label = `${rPct}% Ready — ${100-rPct}% Compromised`; }
+      if (rPct >= 70) { bg = 'var(--success-bg)'; color = 'var(--success-text)'; label = `${rPct}% Ready`; }
+      else if (rPct >= 51) { bg = 'var(--warning-bg)'; color = 'var(--warning-text)'; label = `${rPct}% Ready — Moderate`; }
+      else if (rPct >= 30) { bg = 'var(--danger-bg)'; color = 'var(--danger-text)'; label = `${rPct}% Ready — ${100-rPct}% Compromised`; }
       else { bg = '#7A1F1F'; color = '#FFFFFF'; label = `${rPct}% Ready — ${100-rPct}% Compromised`; }
       readinessBadge.style.background = bg;
       readinessBadge.style.color = color;
@@ -1972,9 +1972,9 @@ async function openLeadProfile(id) {
 function ratingColor(value, max) {
   if (value == null) return null;
   const pct = value / max;
-  if (pct <= 0.4) return { bg: 'var(--color-background-danger)', text: 'var(--color-text-danger)' };
-  if (pct <= 0.7) return { bg: 'var(--color-background-warning)', text: 'var(--color-text-warning)' };
-  return { bg: 'var(--color-background-success)', text: 'var(--color-text-success)' };
+  if (pct <= 0.4) return { bg: 'var(--danger-bg)', text: 'var(--danger-text)' };
+  if (pct <= 0.7) return { bg: 'var(--warning-bg)', text: 'var(--warning-text)' };
+  return { bg: 'var(--success-bg)', text: 'var(--success-text)' };
 }
 
 function renderNarrativeReview(lead) {
