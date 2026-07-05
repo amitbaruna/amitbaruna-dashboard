@@ -2090,13 +2090,23 @@ async function loadLeadClinicalInsight(lead) {
 
   const weakest = layers.length ? layers.reduce((a,b) => a.score < b.score ? a : b) : null;
 
-  // Cascade logic
+  // Cascade logic — each rule now cites its actual source mechanism (Master Mechanism
+  // Consolidation, 5 July 2026) rather than asserting an uncited claim. The L3+L4 rule
+  // is corrected to reflect that only the L4→L3 direction is evidenced in the library;
+  // the reverse direction is explicitly flagged as unconfirmed rather than presented as
+  // a confirmed two-way loop.
   const cascadeRisks = [];
   const l1=lead.layer1_score,l2=lead.layer2_score,l3=lead.layer3_score,l4=lead.layer4_score,l5=lead.layer5_score;
-  if(l1 != null && l1 < 10) cascadeRisks.push('L1 Circadian failure driving cortisol elevation → L2 Neurochemical at risk');
-  if(l2 != null && l2 < 8) cascadeRisks.push('L2 Neurochemical compromised → L4 Gut-Brain and L5 Identity at risk');
-  if(l3 != null && l4 != null && l3 < 8 && l4 < 10) cascadeRisks.push('L3+L4 feedback loop — insulin resistance + gut inflammation reinforcing each other');
-  if(l4 != null && l4 < 8) cascadeRisks.push('L4 severely compromised → depleting L2 serotonin via gut-brain axis');
+  if(l1 != null && l1 < 10) cascadeRisks.push('MM-3/L-325: circadian disruption is linked to next-evening cortisol elevation, which impairs insulin effectiveness the following day — cite this specific timing (next-evening, not same-night) if used.');
+  if(l2 != null && l2 < 8) cascadeRisks.push('MM-4 + MM-1/MM-8: chronic sympathetic activation is linked to gut motility disruption via blood-flow shunting (MM-4), AND separately to reduced regulatory control over consistency/reward circuits (MM-1 if likely recent-onset, MM-8 if likely long-standing/habitual) — these are two distinct mechanisms, do not merge into one vague statement.');
+  if(l3 != null && l4 != null && l3 < 8 && l4 < 10) cascadeRisks.push('ASYMMETRIC — do not present as a confirmed two-way loop: gut barrier compromise driving metabolic dysfunction (L4→L3) is documented in the library. The reverse direction (L3→L4) is plausible but NOT directly evidenced — if mentioned at all, explicitly note this direction is unconfirmed.');
+  if(l4 != null && l4 < 8) cascadeRisks.push('Tryptophan-fork mechanism: gut-brain axis disruption is linked to reduced serotonin production via a tryptophan-diversion pathway (chronic stress diverts tryptophan toward kynurenine instead of serotonin), affecting mood/stress regulation.');
+
+  const conf = lead.dominant_pattern_confidence || 50;
+  let certaintyInstruction;
+  if (conf < 40) certaintyInstruction = 'Pattern confidence under 40%: use "may be" / "could be" / "appears to" for every mechanism claim — do not state any mechanism as established fact.';
+  else if (conf < 75) certaintyInstruction = 'Pattern confidence 40-74%: use "is likely" / "appears to be" — moderate directness, not absolute statements.';
+  else certaintyInstruction = 'Pattern confidence 75%+: mechanisms can be stated with more directness, but ALWAYS as "is most likely" or "is probably" — never as unqualified fact ("is", "will"). This is a hard requirement, not a suggestion.';
 
   const prompt = `You are Amit Baruna — a Metabolic Diagnostic & GLP-1 specialist. You are reviewing a lead's assessment data before a discovery call. Generate a pre-call clinical brief.
 
@@ -2105,7 +2115,7 @@ LEAD DATA:
 - Metabolic score: ${lead.metabolic_score || '?'}/100
 - Layer scores (out of 20): ${layers.map(l => `${l.name}: ${l.score}/20`).join(', ')}
 - Weakest layer: ${weakest ? `${weakest.name} at ${weakest.score}/20` : 'Unknown'}
-- Dominant pattern: ${lead.dominant_pattern || 'Not assigned'} (${lead.dominant_pattern_confidence || '?'}% confidence)
+- Dominant pattern: ${lead.dominant_pattern || 'Not assigned'} (${conf}% confidence)
 - Stress Load (SLI): ${lead.stress_load_index || '?'}/12 — ${lead.stress_load_classification || ''}
 - Resilience (BRI): ${lead.behavioral_resilience_index || '?'}/12 — ${lead.behavioral_resilience_classification || ''}
 - Glucose Stability (GSI): ${lead.glucose_stability_index || '?'}/12 — ${lead.glucose_stability_classification || ''}
@@ -2117,16 +2127,23 @@ LEAD DATA:
 - Stress alignment gap: ${lead.stress_alignment || '?'}
 - Gut alignment gap: ${lead.gut_alignment || '?'}
 - Medical conditions: ${lead.flags || 'None'}
-- Cascade risks: ${cascadeRisks.length ? cascadeRisks.join(' | ') : 'None detected'}
+- Cascade mechanisms (cite the specific mechanism named below — do not invent a different one, and do not state anything not listed here as fact): ${cascadeRisks.length ? cascadeRisks.join(' | ') : 'None detected — describe only the dominant layer\'s own direct mechanism, do not invent a cascade.'}
 
-Generate exactly 3 clinical insights as JSON array. Each insight must have: type (warn/positive/info), title (4-5 words max), text (2 sentences max, direct and specific to THIS person's data).
+═══ CERTAINTY REQUIREMENT — APPLIES TO EVERY SENTENCE ═══
+${certaintyInstruction}
+Every mechanism claim is expert-derived heuristic reasoning from published research, NOT a lab-confirmed fact about this specific person. Word every insight accordingly — this is a hard requirement, not a style preference.
+
+═══ HARD BAN — NEVER VIOLATE, NO EXCEPTIONS ═══
+NEVER predict how a medication (GLP-1, Ozempic, Mounjaro, metformin, or any named drug) will perform, fail, succeed, or be "worked against" by any physiological pattern. NEVER state or imply a medication is insufficient, undermined, or "fighting" the body's current state. If medication context is relevant at all, the ONLY acceptable framing is: "worth discussing with her prescribing doctor whether [pattern] is relevant to her current treatment" — nothing more specific than that. This applies even if the data seems to suggest a real interaction. This rule overrides every other instruction in this prompt with no exceptions.
+NEVER state a disease-probability or diagnosis-trajectory prediction (e.g. "this will lead to resistance", "this will accelerate X"). Describe only the CURRENT pattern in the data given — never its predicted future disease course.
+
+Generate exactly 3 clinical insights as JSON array. Each insight must have: type (warn/positive/info), title (4-5 words max), text (2 sentences max, direct and specific to THIS person's data), grounding (either "cited: [mechanism name]" if a specific cascade mechanism above was used, or "layer-only: no cascade mechanism fired" if none applied — this field is for internal tracking only, it will not be shown to the client or coach directly, so it must always be filled honestly, never omitted).
 
 Rules:
-- Identify the PRIMARY driver (what is causing the worst layer to fail)
-- Name the specific neurochemical or physiological mechanism involved
+- Identify the PRIMARY driver (what is causing the worst layer to fail) using ONLY the mechanisms named in the cascade data above — if none fired, describe the dominant layer's own mechanism instead of inventing a cascade
 - Tell me what to lead with on the call and what to avoid saying
-- Use cascade data to predict what will fail next if untreated
 - Sound like a diagnostician, not a report
+- Apply the certainty requirement and hard ban above to every single sentence without exception
 
 Return JSON only. No preamble.`;
 
@@ -2136,7 +2153,7 @@ Return JSON only. No preamble.`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 500,
+        max_tokens: 650,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -2147,7 +2164,7 @@ Return JSON only. No preamble.`;
     let insights;
     try { insights = JSON.parse(clean); } catch(e) {
       // Worker returns narrative format — wrap it
-      insights = [{ type: 'info', title: 'Clinical brief', text: clean.slice(0, 300) }];
+      insights = [{ type: 'info', title: 'Clinical brief', text: clean.slice(0, 300), grounding: 'parse-fallback' }];
     }
 
     const iconMap = { warn: 'ti-alert-triangle', positive: 'ti-trending-up', info: 'ti-bulb' };
