@@ -2094,13 +2094,36 @@ async function loadLeadClinicalInsight(lead) {
   // Consolidation, 5 July 2026) rather than asserting an uncited claim. The L3+L4 rule
   // is corrected to reflect that only the L4→L3 direction is evidenced in the library;
   // the reverse direction is explicitly flagged as unconfirmed rather than presented as
-  // a confirmed two-way loop.
+  // a confirmed two-way loop. Corrected 6 July 2026: the L1 rule was mislabeled MM-3
+  // (Peripheral Clock-Food Misalignment, which is about meal timing, not sleep) — the
+  // actual mechanism (sleep-triggered cortisol elevation) is MM-2. Added MM-6 (condition
+  // overlap) and MM-7 (Allostatic Load combined framing), both previously represented
+  // only as raw data with no rule connecting them to a named mechanism.
   const cascadeRisks = [];
   const l1=lead.layer1_score,l2=lead.layer2_score,l3=lead.layer3_score,l4=lead.layer4_score,l5=lead.layer5_score;
-  if(l1 != null && l1 < 10) cascadeRisks.push('MM-3/L-325: circadian disruption is linked to next-evening cortisol elevation, which impairs insulin effectiveness the following day — cite this specific timing (next-evening, not same-night) if used.');
+  const conditions = (lead.flags || '').toLowerCase();
+  const sli = lead.stress_load_index, rcs = lead.recovery_capacity_score, syli = lead.system_load_index;
+
+  if(l1 != null && l1 < 10) cascadeRisks.push('MM-2 (sleep-triggered pathway, corrected from a prior MM-3 mislabel) — L-325: a single night of poor sleep is linked to next-evening cortisol elevation, which impairs insulin effectiveness the following day. Cite this specific timing (next-evening, not same-night) if used.');
   if(l2 != null && l2 < 8) cascadeRisks.push('MM-4 + MM-1/MM-8: chronic sympathetic activation is linked to gut motility disruption via blood-flow shunting (MM-4), AND separately to reduced regulatory control over consistency/reward circuits (MM-1 if likely recent-onset, MM-8 if likely long-standing/habitual) — these are two distinct mechanisms, do not merge into one vague statement.');
   if(l3 != null && l4 != null && l3 < 8 && l4 < 10) cascadeRisks.push('ASYMMETRIC — do not present as a confirmed two-way loop: gut barrier compromise driving metabolic dysfunction (L4→L3) is documented in the library. The reverse direction (L3→L4) is plausible but NOT directly evidenced — if mentioned at all, explicitly note this direction is unconfirmed.');
   if(l4 != null && l4 < 8) cascadeRisks.push('Tryptophan-fork mechanism: gut-brain axis disruption is linked to reduced serotonin production via a tryptophan-diversion pathway (chronic stress diverts tryptophan toward kynurenine instead of serotonin), affecting mood/stress regulation.');
+
+  // MM-6 — Insulin/IGF-1 Cross-System Hub. Only fires when a relevant condition is
+  // disclosed AND the metabolic layer (L3) is genuinely compromised — this is a
+  // condition-specific mechanism, not a general L3 statement, so it must not fire
+  // for a low L3 score alone with no relevant condition disclosed.
+  const hasMetabolicCondition = conditions.includes('pcos') || conditions.includes('thyroid') || conditions.includes('diabetes') || conditions.includes('pre-diabetes') || conditions.includes('prediabetes');
+  if (hasMetabolicCondition && l3 != null && l3 < 12) {
+    cascadeRisks.push('MM-6: the insulin/IGF-1 signalling pathway is known to interact directly with the disclosed condition (PCOS, thyroid, or diabetes/pre-diabetes) — do not describe L3 as a generic blood-sugar issue in isolation from the disclosed condition; ground the mechanism specifically in how insulin/IGF-1 signalling and that condition affect each other.');
+  }
+
+  // MM-7 — Allostatic Load as a standalone principle. Fires when SYLI (system load)
+  // is elevated AND RCS (recovery capacity) is compromised TOGETHER — this is the
+  // co-occurrence pattern itself, not either number alone, per Registry Entry 61.
+  if (syli != null && rcs != null && syli >= 3 && rcs <= 10) {
+    cascadeRisks.push('MM-7: this specific combination (elevated system load together with compromised recovery capacity) is itself a recognized pattern — multiple systems being mildly affected at once carries real risk even though no single layer alone crosses a severe threshold. Frame this as one meaningful pattern, not as two separate mildly-concerning numbers.');
+  }
 
   const conf = lead.dominant_pattern_confidence || 50;
   let certaintyInstruction;
