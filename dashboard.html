@@ -830,6 +830,15 @@ select.form-input{cursor:pointer;}
             </div>
           </div>
 
+          <!-- Adaptive Confidence Engine — population summary -->
+          <div class="intel-card" style="margin-bottom:0;">
+            <div class="intel-card-title">Adaptive Engine — Confirmation Rate</div>
+            <div id="an-adaptive-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px;">
+              <div class="empty" style="font-size:11px;grid-column:1/-1;">No adaptive data yet</div>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);">Confirmed = base 10-question pattern held after refinement. Disconfirmed = follow-ups changed the dominant pattern.</div>
+          </div>
+
           <!-- Existing sections preserved -->
           <div class="card" style="margin-bottom:0;">
             <div class="card-header"><div class="card-title">🔥 Multi-condition leads</div></div>
@@ -1121,6 +1130,14 @@ select.form-input{cursor:pointer;}
             <div class="divider" style="margin:12px 0;"></div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Awareness Alignment — Self-Perception vs Assessment</div>
             <div id="lp-aas-rows"></div>
+          </div>
+          <div id="lp-adaptive-section" style="display:none;">
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Adaptive Confidence Engine</div>
+            <div id="lp-adaptive-outcome" style="margin-bottom:10px;"></div>
+            <div id="lp-adaptive-conf-wrap" style="margin-bottom:10px;"></div>
+            <div id="lp-adaptive-qcount" style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;"></div>
+            <div id="lp-adaptive-factors" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;"></div>
           </div>
         </div>
       </div>
@@ -1789,6 +1806,7 @@ function renderLeads(leads, filter = 'all') {
       </div>
       <div class="badges">
         ${isHot ? '<span class="badge b-hot">🔥 Hot</span>' : ''}
+        ${l.pattern_outcome === 'disconfirmed' ? '<span class="badge b-hot" style="background:var(--warning-bg);color:var(--warning-text);">⟲ Pattern refined</span>' : ''}
         ${statusBadge(l.status || 'new')}
         ${hasCal ? '<span class="badge b-cal">📅 Calendly</span>' : ''}
       </div>
@@ -1924,6 +1942,38 @@ async function openLeadProfile(id) {
         renderAASGap('Sleep perception vs score', lead.sleep_alignment) +
         renderAASGap('Stress perception vs score', lead.stress_alignment) +
         renderAASGap('Gut perception vs score', lead.gut_alignment);
+    }
+
+    // Adaptive Confidence Engine — only show if this session has adaptive data
+    const hasAdaptive = lead.adaptive_confidence != null;
+    const adaptiveSection = document.getElementById('lp-adaptive-section');
+    adaptiveSection.style.display = hasAdaptive ? 'block' : 'none';
+    if (hasAdaptive) {
+      const outcomeMeta = {
+        confirmed: {bg:'var(--success-bg)', text:'var(--success-text)', label:'Confirmed'},
+        disconfirmed: {bg:'var(--warning-bg)', text:'var(--warning-text)', label:'Disconfirmed'},
+        no_adaptive: {bg:'var(--info-bg)', text:'var(--info-text)', label:'No refinement needed'}
+      };
+      const om = outcomeMeta[lead.pattern_outcome] || outcomeMeta.no_adaptive;
+      const provPattern = lead.provisional_pattern ? getPatternMeta(lead.provisional_pattern).short : '—';
+      const finalPattern = lead.final_pattern ? getPatternMeta(lead.final_pattern).short : (lead.dominant_pattern ? getPatternMeta(lead.dominant_pattern).short : '—');
+      document.getElementById('lp-adaptive-outcome').innerHTML =
+        `<span style="background:${om.bg};color:${om.text};font-size:11px;padding:3px 9px;border-radius:var(--radius);">${om.label}</span>
+         ${lead.pattern_outcome && lead.pattern_outcome !== 'no_adaptive' ? `<span style="font-size:12px;color:var(--text-secondary);margin-left:8px;">${provPattern} → ${finalPattern}</span>` : ''}`;
+
+      document.getElementById('lp-adaptive-conf-wrap').innerHTML =
+        renderConfidenceBar(lead.adaptive_confidence, 'Adaptive confidence');
+
+      document.getElementById('lp-adaptive-qcount').textContent =
+        `Follow-ups: ${lead.adaptive_q_suggested ?? 0} suggested · ${lead.adaptive_q_answered ?? 0} answered`;
+
+      const factorBox = (label, val) => `<div style="text-align:center;background:var(--bg);border-radius:6px;padding:6px 4px;">
+        <div style="font-size:10px;color:var(--text-muted);">${label}</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-primary);">${val != null ? Number(val).toFixed(2) : '—'}</div>
+      </div>`;
+      document.getElementById('lp-adaptive-factors').innerHTML =
+        factorBox('IC', lead.conf_ic) + factorBox('BP', lead.conf_bp) + factorBox('SB', lead.conf_sb) +
+        factorBox('PBC', lead.conf_pbc) + factorBox('CA', lead.conf_ca);
     }
   }
 
@@ -2966,6 +3016,33 @@ async function loadAnalytics() {
         </div>`;
       }).join('')
     : '<div style="font-size:11px;color:var(--text-muted);">No confidence data yet</div>';
+
+  // ── Adaptive Confidence Engine — population summary ──
+  const scoredWithAdaptiveKnown = scoredLeads.filter(l => l.adaptive_confidence != null);
+  const wereOffered = scoredWithAdaptiveKnown.filter(l => (l.adaptive_q_suggested || 0) > 0);
+  const optedIn = wereOffered.filter(l => (l.adaptive_q_answered || 0) > 0);
+  const confirmedCount = scoredWithAdaptiveKnown.filter(l => l.pattern_outcome === 'confirmed').length;
+  const disconfirmedCount = scoredWithAdaptiveKnown.filter(l => l.pattern_outcome === 'disconfirmed').length;
+  const adaptiveEl = document.getElementById('an-adaptive-summary');
+  if (scoredWithAdaptiveKnown.length === 0) {
+    adaptiveEl.innerHTML = '<div class="empty" style="font-size:11px;grid-column:1/-1;">No adaptive data yet</div>';
+  } else {
+    // Opt-in rate is scoped to people who were actually shown the choice —
+    // people the engine never offered (already high-confidence) are excluded
+    // so this doesn't silently blend "declined" with "wasn't asked".
+    const optInPct = wereOffered.length ? Math.round((optedIn.length / wereOffered.length) * 100) : 0;
+    const confirmedPct = optedIn.length ? Math.round((confirmedCount / optedIn.length) * 100) : 0;
+    const disconfirmedPct = optedIn.length ? Math.round((disconfirmedCount / optedIn.length) * 100) : 0;
+    const statBox = (val, label, color) => `<div style="background:var(--bg);border-radius:var(--radius);padding:12px;text-align:center;">
+      <div style="font-size:20px;font-weight:600;${color ? `color:${color};` : ''}">${val}</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">${label}</div>
+    </div>`;
+    adaptiveEl.innerHTML =
+      statBox(optInPct + '%', `Opt-in rate (of ${wereOffered.length} offered)`) +
+      statBox(confirmedPct + '%', 'Confirmed', 'var(--success-text)') +
+      statBox(disconfirmedPct + '%', 'Disconfirmed', 'var(--warning-text)') +
+      statBox(scoredWithAdaptiveKnown.length, 'Total tracked');
+  }
 
   // Confidence distribution buckets
   const confBuckets = {'< 40%': 0, '40–59%': 0, '60–74%': 0, '75–89%': 0, '90%+': 0};
