@@ -509,7 +509,7 @@
     try {
       await supabaseFetch('/auth/v1/recover', {
         method: 'POST',
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, redirect_to: 'https://amitbaruna-dashboard.amit-baruna.workers.dev/reset-password.html' })
       });
       msg.textContent = 'Reset link sent. Check your inbox.';
       msg.style.color = 'var(--success)';
