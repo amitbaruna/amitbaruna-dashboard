@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">e
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amit Baruna — Coach Portal</title>
 <link rel="icon" type="image/png" href="favicon.png">
@@ -394,7 +394,7 @@
           <input type="email" id="reset-email" placeholder="amit@amitbaruna.com" />
         </div>
         <div class="error-msg" id="reset-msg"></div>
-        <button class="btn-login" onclick="await supabaseFetch('/auth/v1/recover?redirect_to=https://amitbaruna-dashboard.amit-baruna.workers.dev/reset-password.html', {   method: 'POST',   body: JSON.stringify({ email }) });">
+        <button class="btn-login" onclick="sendReset()">
           <span class="btn-text">Send reset link</span>
           <span class="spinner"></span>
         </button>
