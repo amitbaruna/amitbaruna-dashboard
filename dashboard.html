@@ -96,6 +96,22 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .app-pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--warning-bg);color:var(--warning-text);margin-left:6px;}
 .app-ask textarea{width:100%;min-height:64px;font-family:inherit;font-size:13px;padding:10px 12px;border:0.5px solid var(--border-md);border-radius:8px;resize:vertical;background:#FAFAFA;color:var(--text-primary);}
 .app-answer{margin-top:12px;font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;}
+a.app-link,.app-click{cursor:pointer;}
+.app-click:hover{box-shadow:var(--shadow);border-color:var(--border-md);}
+.app-click .stat-sub:after{content:' →';color:var(--text-muted);}
+.app-table tr.app-row{cursor:pointer;}
+.app-table tr.app-row:hover td{background:#F9F9F9;}
+.app-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;margin-right:4px;background:#F1EFE8;color:#5F5E5A;white-space:nowrap;}
+.app-tag.g{background:var(--success-bg);color:var(--success-text);}
+.app-tag.r{background:var(--danger-bg);color:var(--danger-text);}
+.app-tag.b{background:var(--info-bg);color:var(--info-text);}
+.app-kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:12px;}
+.app-kv div:nth-child(odd){color:var(--text-muted);}
+.app-dots{display:flex;gap:4px;margin-top:6px;}
+.app-dot{width:14px;height:14px;border-radius:3px;background:#E6E4DC;}
+.app-dot.on{background:#639922;}
+.app-back{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin-bottom:12px;}
+.app-back:hover{color:var(--text-primary);}
 @media (max-width:900px){.app-grid6{grid-template-columns:repeat(2,minmax(0,1fr));}}
 
 /* Screens */
@@ -917,12 +933,12 @@ select.form-input{cursor:pointer;}
         <div id="app-error" class="card" style="display:none;color:var(--danger-text);font-size:12px;"></div>
 
         <div class="app-grid6">
-          <div class="app-stat"><div class="stat-label">App signups</div><div class="stat-value" id="app-k-signups">—</div><div class="stat-sub" id="app-k-signups-sub"></div></div>
-          <div class="app-stat"><div class="stat-label">Active last 7 days</div><div class="stat-value" id="app-k-active">—</div><div class="stat-sub" id="app-k-active-sub"></div></div>
-          <div class="app-stat"><div class="stat-label">Assessments in app</div><div class="stat-value" id="app-k-assess">—</div><div class="stat-sub" id="app-k-assess-sub"></div></div>
-          <div class="app-stat"><div class="stat-label">WhatsApp captured</div><div class="stat-value" id="app-k-wa">—</div><div class="stat-sub" id="app-k-wa-sub"></div></div>
-          <div class="app-stat"><div class="stat-label">Also took the web quiz</div><div class="stat-value" id="app-k-web">—</div><div class="stat-sub" id="app-k-web-sub"></div></div>
-          <div class="app-stat"><div class="stat-label">Likely uninstalled</div><div class="stat-value" id="app-k-unin">—</div><div class="stat-sub" id="app-k-unin-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('all','App signups')" title="Click to see the people"><div class="stat-label">App signups</div><div class="stat-value" id="app-k-signups">—</div><div class="stat-sub" id="app-k-signups-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('active7','Active in the last 7 days')" title="Click to see the people"><div class="stat-label">Active last 7 days</div><div class="stat-value" id="app-k-active">—</div><div class="stat-sub" id="app-k-active-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('assessed','People who took the assessment')" title="Click to see the people"><div class="stat-label">Assessments in app</div><div class="stat-value" id="app-k-assess">—</div><div class="stat-sub" id="app-k-assess-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('whatsapp','WhatsApp captured')" title="Click to see the people"><div class="stat-label">WhatsApp captured</div><div class="stat-value" id="app-k-wa">—</div><div class="stat-sub" id="app-k-wa-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('webquiz','Also took the web quiz')" title="Click to see the people"><div class="stat-label">Also took the web quiz</div><div class="stat-value" id="app-k-web">—</div><div class="stat-sub" id="app-k-web-sub"></div></div>
+          <div class="app-stat app-click" onclick="openAppList('uninstalled','Likely uninstalled')" title="Click to see the people"><div class="stat-label">Likely uninstalled</div><div class="stat-value" id="app-k-unin">—</div><div class="stat-sub" id="app-k-unin-sub"></div></div>
         </div>
 
         <div class="two-col">
@@ -933,6 +949,9 @@ select.form-input{cursor:pointer;}
           <div class="card" style="margin-bottom:0;">
             <div class="card-header"><div class="card-title">Sign-in method</div></div>
             <div id="app-signin"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:8px;">Gender</div>
+            <div id="app-gender"></div>
           </div>
         </div>
 
@@ -961,21 +980,44 @@ select.form-input{cursor:pointer;}
 
         <div class="card" style="margin-top:14px;">
           <div class="card-header">
-            <div class="card-title">Real users</div>
-            <button class="app-btn" id="app-users-btn">Show list</button>
+            <div class="card-title">People in the app</div>
+            <button class="app-btn" onclick="openAppList('all','All app users')">Open full list</button>
           </div>
-          <div id="app-users" class="app-muted" style="font-size:12px;">Hidden until you ask. This list is never sent to Claude.</div>
+          <div class="app-muted" style="font-size:12px;">Click any number above, or open the full list, to see who they are and open each person's full profile. This list is never sent to Claude.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Emerging insights <span class="app-muted" style="font-weight:400;font-size:11px;margin-left:6px;">Claude API · generated only when you click</span></div>
+            <button class="app-btn primary" id="app-ins-btn">Generate insights</button>
+          </div>
+          <div id="app-insights" class="app-muted" style="font-size:12px;">Uses counts and averages from the app and the web quiz. No names, contact details or health details are sent.</div>
         </div>
 
         <div class="card app-ask">
           <div class="card-header"><div class="card-title">Ask about this data</div></div>
-          <textarea id="app-ask-q" maxlength="500" placeholder="e.g. What stands out in the last two weeks? What should I fix first?"></textarea>
+          <textarea id="app-ask-q" maxlength="500" placeholder="e.g. What stands out in the last two weeks? Which layer do web-quiz people hit hardest, and does the app match it?"></textarea>
           <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
             <button class="app-btn primary" id="app-ask-btn">Ask Claude</button>
-            <span class="app-muted" style="font-size:11px;">Runs only when you press the button. Claude sees counts only. No names, emails or health details.</span>
+            <span class="app-muted" style="font-size:11px;">Runs only when you press the button. Claude sees counts and averages only.</span>
           </div>
           <div class="app-answer" id="app-answer"></div>
         </div>
+      </div>
+
+      <!-- APP USERS LIST -->
+      <div class="screen" id="screen-app-list">
+        <div class="app-back" onclick="goScreen('app')"><i class="ti ti-arrow-left"></i> Back to App</div>
+        <div class="card">
+          <div class="card-header"><div class="card-title" id="app-list-title">App users</div><div class="app-muted" id="app-list-count" style="font-size:12px;"></div></div>
+          <div id="app-list-body"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- APP USER PROFILE -->
+      <div class="screen" id="screen-app-user">
+        <div class="app-back" onclick="goScreen(appReturn)"><i class="ti ti-arrow-left"></i> Back</div>
+        <div id="app-user-body"><div class="empty" style="padding:30px 0;">Loading…</div></div>
       </div>
 
       <!-- VALIDATION DASHBOARD -->
@@ -1376,6 +1418,7 @@ function goScreen(name) {
   if (screen) screen.classList.add('active');
   const navItem = document.querySelector(`[data-screen="${name}"]`);
   if (navItem) navItem.classList.add('active');
+  if (name === 'app-list' || name === 'app-user') { const an = document.querySelector('[data-screen="app"]'); if (an) an.classList.add('active'); }
   const titles = {
     overview: 'Metabolic Intelligence Command Center',
     clients: 'All clients',
@@ -1386,6 +1429,8 @@ function goScreen(name) {
     analytics: 'Analytics',
     validation: 'Assessment Validation',
     app: 'Metabolic Score App',
+    'app-list': 'Metabolic Score App',
+    'app-user': 'Metabolic Score App',
     profile: '',
     'lead-profile': ''
   };
@@ -3401,6 +3446,10 @@ function renderApp(d) {
     (s.apple_email_not_shared ? `<div class="app-muted" style="font-size:11px;margin-top:8px;">${s.apple_email_not_shared} Apple account(s): email not shared. Can only be matched to the web quiz by WhatsApp.</div>` : '') +
     `<div class="app-muted" style="font-size:10px;margin-top:6px;">n=${s.n}</div>`);
 
+  // gender
+  const g = d.gender;
+  appSet('app-gender', `<table class="app-table"><tr><td>Female</td><td style="text-align:right;">${g.female}</td></tr><tr><td>Male</td><td style="text-align:right;">${g.male}</td></tr>${g.other ? `<tr><td>Other</td><td style="text-align:right;">${g.other}</td></tr>` : ''}${g.not_given ? `<tr><td>Not given</td><td style="text-align:right;">${g.not_given}</td></tr>` : ''}</table><div class="app-muted" style="font-size:10px;margin-top:4px;">n=${g.n}</div>`);
+
   // inactivity
   appSet('app-inactivity', '<table class="app-table"><tr><th>Age band</th><th style="text-align:right;">n</th><th style="text-align:right;">Inactive 7+ d</th><th style="text-align:right;">Inactive 14+ d</th></tr>' +
     d.inactivity_by_age_band.filter(b => b.n > 0).map(b => b.suppressed
@@ -3419,29 +3468,8 @@ function renderApp(d) {
   appSet('app-funnel', `<table class="app-table"><tr><td>Web quiz: people</td><td style="text-align:right;">${f.web_quiz_people}</td></tr><tr><td>Web quiz: submissions</td><td style="text-align:right;">${f.web_quiz_submissions}</td></tr><tr><td>App signups</td><td style="text-align:right;">${f.app_signups}</td></tr><tr><td>…who also took the web quiz</td><td style="text-align:right;">${f.app_users_who_also_took_web_quiz}</td></tr><tr><td>App users with an assessment</td><td style="text-align:right;">${f.app_users_with_assessment}</td></tr><tr><td>App bookings</td><td style="text-align:right;">${d.bookings.total}</td></tr></table>`);
 }
 
-document.getElementById('app-refresh').addEventListener('click', () => { loadApp(); if (document.getElementById('app-users-btn').dataset.open === '1') loadAppUsers(); });
-document.getElementById('app-internal').addEventListener('change', () => { loadApp(); if (document.getElementById('app-users-btn').dataset.open === '1') loadAppUsers(); });
-
-async function loadAppUsers() {
-  const box = document.getElementById('app-users');
-  box.textContent = 'Loading…';
-  try {
-    const { users } = await appApi('/app/users');
-    if (!users.length) { box.textContent = 'No users.'; return; }
-    box.innerHTML = '<table class="app-table"><tr><th>Email</th><th>Signed up</th><th>Method</th><th>Last activity</th><th>WhatsApp</th><th></th></tr>' + users.map(u =>
-      `<tr><td>${u.email ? _esc(u.email) : '<span class="app-muted">Apple · email not shared</span>'}</td><td>${_esc((u.signed_up || '').slice(0, 10))}</td><td>${_esc(u.method)}</td><td>${u.last_activity ? _esc(u.last_activity.slice(0, 10)) : '<span class="app-muted">never</span>'}</td><td>${u.has_whatsapp ? 'yes' : '—'}</td><td>${u.internal ? '<span class="app-pill">internal</span>' : ''}</td></tr>`).join('') + '</table>';
-  } catch (e) { box.textContent = 'Could not load the list.'; }
-}
-document.getElementById('app-users-btn').addEventListener('click', function () {
-  const box = document.getElementById('app-users');
-  if (this.dataset.open === '1') {
-    this.dataset.open = '0'; this.textContent = 'Show list';
-    box.textContent = 'Hidden until you ask. This list is never sent to Claude.';
-  } else {
-    this.dataset.open = '1'; this.textContent = 'Hide list';
-    loadAppUsers();
-  }
-});
+document.getElementById('app-refresh').addEventListener('click', () => { loadApp(); });
+document.getElementById('app-internal').addEventListener('change', () => { loadApp(); });
 
 // Claude panel: runs ONLY when the button is pressed
 document.getElementById('app-ask-btn').addEventListener('click', async function () {
@@ -3454,6 +3482,127 @@ document.getElementById('app-ask-btn').addEventListener('click', async function 
     const res = await appApi('/app/ask?internal=' + inc, { method: 'POST', body: JSON.stringify({ question: q }) });
     out.textContent = res.answer || 'No answer.';
   } catch (e) { out.textContent = 'Could not get an answer. Try again in a moment.'; }
+  this.disabled = false;
+});
+
+
+// ── App users list + profile ────────────────────────────────────
+let appReturn = 'app';
+const LAYER_NAMES = ['Circadian', 'Neurochemical', 'Metabolic', 'Gut-Brain', 'Identity'];
+const _fmtDate = v => v ? new Date(v).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+const _fmtDT = v => v ? new Date(v).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+
+async function openAppList(filter, title) {
+  goScreen('app-list');
+  document.getElementById('app-list-title').textContent = title || 'App users';
+  document.getElementById('app-list-count').textContent = '';
+  appSet('app-list-body', '<div class="empty" style="padding:20px 0;">Loading…</div>');
+  try {
+    const { users } = await appApi('/app/users?filter=' + encodeURIComponent(filter));
+    document.getElementById('app-list-count').textContent = users.length + (users.length === 1 ? ' person' : ' people') + (document.getElementById('app-internal').checked ? ' · internal accounts included' : '');
+    if (!users.length) { appSet('app-list-body', '<div class="empty" style="padding:24px 0;">Nobody matches yet.</div>'); return; }
+    appSet('app-list-body', '<table class="app-table"><tr><th>Name</th><th>Email</th><th>Method</th><th>Signed up</th><th>Age</th><th>Gender</th><th>Last activity</th><th style="text-align:right;">Tests</th><th></th></tr>' + users.map(u => {
+      const tags = (u.has_whatsapp ? '<span class="app-tag g">WhatsApp</span>' : '') + (u.web_quiz_match ? '<span class="app-tag b">Web quiz</span>' : '') + (u.likely_uninstalled ? '<span class="app-tag r">Likely uninstalled</span>' : '') + (u.internal ? '<span class="app-tag">internal</span>' : '');
+      return `<tr class="app-row" onclick="openAppUser('${_esc(u.id)}','app-list')"><td><strong>${_esc(u.name || '—')}</strong></td><td>${u.email ? _esc(u.email) : '<span class="app-muted">Apple · email not shared</span>'}</td><td>${_esc(u.method)}</td><td>${_fmtDate(u.signed_up)}</td><td>${u.age != null ? u.age : '—'}</td><td>${_esc(u.gender || '—')}</td><td>${u.last_activity ? _fmtDate(u.last_activity) : '<span class="app-muted">never</span>'}</td><td style="text-align:right;">${u.assessments}${u.latest_score != null ? ' <span class="app-muted">(' + u.latest_score + ')</span>' : ''}</td><td>${tags}</td></tr>`;
+    }).join('') + '</table>');
+  } catch (e) { appSet('app-list-body', '<div class="empty" style="padding:24px 0;">Could not load the list.</div>'); }
+}
+
+async function openAppUser(id, from) {
+  appReturn = from || 'app';
+  goScreen('app-user');
+  appSet('app-user-body', '<div class="empty" style="padding:30px 0;">Loading…</div>');
+  try {
+    const res = await fetch(APP_API + '/app/user?id=' + encodeURIComponent(id), { headers: { 'Authorization': 'Bearer ' + await freshToken() } });
+    if (!res.ok) throw new Error('user ' + res.status);
+    renderAppUser(await res.json());
+  } catch (e) { appSet('app-user-body', '<div class="empty" style="padding:30px 0;">Could not load this person.</div>'); }
+}
+
+function renderAppUser(d) {
+  const p = d.profile, latest = d.scores[0];
+  const conds = Array.isArray(p.conditions) ? p.conditions : [];
+  const syms = Array.isArray(p.symptoms) ? p.symptoms : [];
+  const symTxt = x => typeof x === 'string' ? x : (x && (x.name || x.label || x.symptom)) ? (x.name || x.label || x.symptom) + (x.severity != null ? ' (' + x.severity + ')' : '') : JSON.stringify(x);
+  const goals = Array.isArray(p.goals) ? p.goals : [];
+  const kv = (k, v) => `<div>${k}</div><div>${v == null || v === '' ? '<span class="app-muted">—</span>' : v}</div>`;
+  const badge = (t, c) => `<span class="app-tag ${c || ''}">${_esc(t)}</span>`;
+
+  const header = `<div class="card" style="display:flex;align-items:center;gap:14px;">
+      <div class="av ${avColor(p.name)}" style="width:44px;height:44px;font-size:14px;">${_esc(initials(p.name))}</div>
+      <div style="flex:1;"><div style="font-size:16px;font-weight:600;">${_esc(p.name || 'Unnamed')}</div>
+      <div class="app-muted" style="font-size:12px;">${p.email ? _esc(p.email) : 'Apple · email not shared'}</div></div>
+      <div>${badge('Signed in with ' + (p.method || '?'))}${p.push_token_dead_at ? badge('Likely uninstalled', 'r') : ''}${p.onboarded ? badge('Onboarded', 'g') : ''}</div>
+    </div>`;
+
+  const contact = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Contact &amp; basics</div></div><div class="app-kv">
+      ${kv('WhatsApp', p.whatsapp ? _esc(p.whatsapp) : null)}${kv('Age', p.age)}${kv('Gender', _esc(p.gender || ''))}
+      ${kv('Height', p.height_cm ? _esc(p.height_cm) + ' cm' : null)}${kv('Weight', p.weight_kg ? _esc(p.weight_kg) + ' kg' : null)}
+      ${kv('Fat deposition', _esc(p.fat_deposition || ''))}${kv('Goal', _esc(p.goal || ''))}
+      ${kv('Signed up', _fmtDate(p.signed_up))}${kv('Last sign-in', _fmtDate(p.last_sign_in))}${kv('Push notifications', p.has_push_token ? 'on' : 'off / never enabled')}</div></div>`;
+
+  let scoreCard;
+  if (!latest) scoreCard = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Latest score</div></div><div class="empty" style="padding:24px 0;">No assessment taken in the app yet.</div></div>`;
+  else {
+    const layers = [latest.layer1, latest.layer2, latest.layer3, latest.layer4, latest.layer5].map((raw, i) => {
+      const v = raw || 0, pct = Math.round(v / 20 * 100), c = layerColor(pct);
+      const lab = pct <= 45 ? 'High Impact' : pct <= 65 ? 'Moderate Impact' : 'Maintain', cls = pct <= 45 ? 'imp-high' : pct <= 65 ? 'imp-mod' : 'imp-low';
+      return `<div class="lbar"><div class="ll"><strong>Layer ${i + 1} — ${LAYER_NAMES[i]}</strong><div style="display:flex;align-items:center;gap:6px;"><span style="font-weight:600;color:${c};">${v}/20</span><span class="impact-badge ${cls}">${lab}</span></div></div><div class="bt"><div class="bf" style="width:${pct}%;background:${c};"></div></div></div>`;
+    }).join('');
+    const idx = [['SLI', latest.sli], ['BRI', latest.bri], ['GSI', latest.gsi], ['SYLI', latest.syli], ['RCS', latest.rcs]].map(([k, v]) => `<div class="app-stat" style="padding:8px 10px;"><div class="stat-label">${k}</div><div style="font-size:16px;font-weight:600;">${v == null ? '—' : v}</div></div>`).join('');
+    scoreCard = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Latest score · ${_fmtDate(latest.created_at)}</div><div style="font-size:20px;font-weight:600;">${latest.total_score ?? '—'}</div></div>
+      ${layers}
+      <div class="divider"></div>
+      <div class="app-kv">${kv('Dominant pattern', latest.dominant_pattern ? _esc(latest.dominant_pattern) + (latest.dominant_pattern_confidence != null ? ' · ' + latest.dominant_pattern_confidence + '%' : '') : null)}${kv('Secondary pattern', latest.secondary_pattern ? _esc(latest.secondary_pattern) + (latest.secondary_pattern_confidence != null ? ' · ' + latest.secondary_pattern_confidence + '%' : '') : null)}${kv('Engagement grade', _esc(latest.engagement_grade || ''))}</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px;">${idx}</div></div>`;
+  }
+
+  // Metabolic Story (cascade) — from the latest score
+  let story = '<div class="app-muted" style="font-size:12px;">Not available. This person has no score with cascade data (older scores predate it).</div>';
+  if (latest && latest.cascade_risk) {
+    const items = String(latest.cascade_risk).split(' | ').filter(Boolean);
+    story = `<div style="font-size:12px;margin-bottom:6px;">Dominant layer: <strong>${latest.dominant_layer ? 'Layer ' + latest.dominant_layer + ' — ' + LAYER_NAMES[latest.dominant_layer - 1] : '—'}</strong></div>` +
+      items.map(t => `<div class="cc-insight-item ${/high risk/i.test(t) ? 'cc-insight-warn' : 'cc-insight-info'}" style="margin-bottom:6px;"><i class="ti ti-arrow-down-right"></i><span>${_esc(t)}</span></div>`).join('');
+  }
+  const storyCard = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Metabolic Story (cascade)</div></div>${story}<div class="app-muted" style="font-size:10px;margin-top:8px;">Expert-derived heuristic from the latest assessment, not a lab-validated finding.</div></div>`;
+
+  const medCard = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Conditions, symptoms &amp; goals</div></div>
+      <div style="margin-bottom:8px;">${conds.length ? conds.map(c => badge(c, /no known/i.test(c) ? '' : 'r')).join('') : '<span class="app-muted" style="font-size:12px;">None reported</span>'}</div>
+      <div class="app-muted" style="font-size:11px;margin-bottom:4px;">Symptoms</div>
+      <div style="margin-bottom:8px;">${syms.length ? syms.map(x => badge(symTxt(x))).join('') : '<span class="app-muted" style="font-size:12px;">None logged</span>'}</div>
+      <div class="app-muted" style="font-size:11px;margin-bottom:4px;">Goals</div>
+      <div>${goals.length ? goals.map(x => badge(typeof x === 'string' ? x : JSON.stringify(x))).join('') : '<span class="app-muted" style="font-size:12px;">None set</span>'}</div></div>`;
+
+  const hist = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Score history</div></div>${d.scores.length ? '<table class="app-table"><tr><th>Date</th><th style="text-align:right;">Score</th><th>Dominant pattern</th><th>Layer</th></tr>' + d.scores.map(r => `<tr><td>${_fmtDate(r.created_at)}</td><td style="text-align:right;">${r.total_score ?? '—'}</td><td>${_esc(r.dominant_pattern || '—')}</td><td>${r.dominant_layer ? 'L' + r.dominant_layer : '—'}</td></tr>`).join('') + '</table>' : '<div class="app-muted" style="font-size:12px;">No assessments yet.</div>'}</div>`;
+
+  const cr = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Cravings logged</div></div>${d.cravings.length ? '<table class="app-table"><tr><th>Craving</th><th>When</th><th>Layer</th><th>Habit or signal</th><th>Date</th></tr>' + d.cravings.map(c => `<tr><td>${_esc(c.craving_type || '—')}</td><td>${_esc(c.craving_time || '—')}</td><td>${c.mapped_layer ? 'L' + c.mapped_layer : '—'}</td><td>${c.tier === 'habit' ? 'Habit' : c.tier ? 'Signal' : '—'}</td><td>${_fmtDate(c.created_at)}</td></tr>`).join('') + '</table>' : '<div class="app-muted" style="font-size:12px;">No cravings logged yet.</div>'}</div>`;
+
+  const dots = (() => { const set = new Set(d.checkins.recent.filter(c => c.completed).map(c => c.date)); const out = []; for (let i = 13; i >= 0; i--) { const dt = new Date(); dt.setDate(dt.getDate() - i); const k = dt.toISOString().slice(0, 10); out.push(`<div class="app-dot ${set.has(k) ? 'on' : ''}" title="${k}"></div>`); } return out.join(''); })();
+  const cyc = d.cycles.length ? '<table class="app-table" style="margin-top:8px;"><tr><th>Cycle start</th><th>Status</th><th style="text-align:right;">Adherence</th></tr>' + d.cycles.map(c => `<tr><td>${_fmtDate(c.start_date)}</td><td>${_esc(String(c.status || '').replace(/_/g, ' '))}</td><td style="text-align:right;">${c.adherence_count_at_close != null ? c.adherence_count_at_close + '/14' : '—'}</td></tr>`).join('') + '</table>' : '';
+  const chk = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Check-ins &amp; 14-day cycle</div></div>
+      <div class="app-kv">${kv('Completed (all time)', d.checkins.completed_total)}${kv('Current streak', d.checkins.current_streak_days + ' day(s)')}</div>
+      <div class="app-muted" style="font-size:10px;margin-top:8px;">Last 14 days (green = done)</div><div class="app-dots">${dots}</div>${cyc}</div>`;
+
+  const eng = `<div class="card" style="margin-bottom:0;"><div class="card-header"><div class="card-title">Engagement</div></div><div class="app-kv">
+      ${kv('NPS rating', d.nps.length ? d.nps[0].score + '/5 (' + _fmtDate(d.nps[0].created_at) + ')' : null)}${kv('Reports downloaded', d.downloads.length)}${kv('Bookings', d.bookings.length)}${kv('Narratives generated', d.narratives_count)}
+      ${kv('Notifications sent', d.notifications.length)}${kv('Swiped away in app', d.notifications.filter(n => n.dismissed_at).length)}</div>
+      ${d.notifications.length ? '<table class="app-table" style="margin-top:8px;"><tr><th>Notification</th><th>Sent</th><th>Swiped away</th></tr>' + d.notifications.slice(0, 8).map(n => `<tr><td>${_esc(String(n.type).replace(/_/g, ' '))}</td><td>${_fmtDT(n.sent_at)}</td><td>${n.dismissed_at ? _fmtDT(n.dismissed_at) : '—'}</td></tr>`).join('') + '</table>' : ''}</div>`;
+
+  appSet('app-user-body', header + `<div class="two-col">${contact}${scoreCard}</div><div class="two-col">${storyCard}${medCard}</div><div class="two-col">${hist}${cr}</div><div class="two-col">${chk}${eng}</div>`);
+}
+
+// Emerging insights: runs ONLY when the button is pressed
+document.getElementById('app-ins-btn').addEventListener('click', async function () {
+  const box = document.getElementById('app-insights');
+  this.disabled = true; box.className = 'app-muted'; box.textContent = 'Thinking…';
+  try {
+    const inc = document.getElementById('app-internal').checked ? '1' : '0';
+    const res = await appApi('/app/insights?internal=' + inc, { method: 'POST' });
+    const iconMap = { warn: 'ti-alert-triangle', positive: 'ti-trending-up', info: 'ti-bulb' };
+    const classMap = { warn: 'cc-insight-warn', positive: 'cc-insight-pos', info: 'cc-insight-info' };
+    box.className = '';
+    box.innerHTML = (res.insights || []).map(i => `<div class="cc-insight-item ${classMap[i.type] || 'cc-insight-info'}" style="margin-bottom:8px;"><i class="ti ${iconMap[i.type] || 'ti-bulb'}"></i><span>${_esc(i.text)}</span></div>`).join('') || 'No insights returned.';
+  } catch (e) { box.className = 'app-muted'; box.textContent = 'Could not generate insights. Try again in a moment.'; }
   this.disabled = false;
 });
 
