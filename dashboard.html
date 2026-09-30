@@ -71,6 +71,33 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 /* Content area */
 .content{flex:1;overflow-y:auto;padding:20px 24px;}
 
+/* ── App tab ───────────────────────────────────────────────── */
+.app-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.app-frame{font-size:11px;color:var(--text-muted);}
+.app-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);cursor:pointer;user-select:none;}
+.app-btn{font-family:inherit;font-size:12px;font-weight:500;padding:7px 12px;border-radius:8px;border:0.5px solid var(--border-md);background:var(--surface);color:var(--text-primary);cursor:pointer;}
+.app-btn:hover{border-color:var(--text-muted);}
+.app-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.app-btn:disabled{opacity:.5;cursor:not-allowed;}
+.app-grid6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px;}
+.app-stat{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.app-stat .stat-sub{display:block;}
+.app-table{width:100%;border-collapse:collapse;font-size:12px;}
+.app-table th{text-align:left;font-weight:500;color:var(--text-muted);font-size:11px;padding:6px 8px;border-bottom:0.5px solid var(--border-md);}
+.app-table td{padding:7px 8px;border-bottom:0.5px solid var(--border);color:var(--text-primary);}
+.app-table tr:last-child td{border-bottom:none;}
+.app-muted{color:var(--text-muted);}
+.app-bars{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:10px;}
+.app-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;}
+.app-bar div.fill{width:100%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;}
+.app-bar span{font-size:10px;color:var(--text-muted);margin-top:4px;white-space:nowrap;}
+.app-bar b{font-size:11px;font-weight:500;margin-bottom:3px;}
+.app-hatch{background:repeating-linear-gradient(135deg,#F7F7F7,#F7F7F7 8px,#EFEFEF 8px,#EFEFEF 16px);border:0.5px dashed var(--border-md);border-radius:var(--radius);padding:18px;text-align:center;font-size:12px;color:var(--text-muted);}
+.app-pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--warning-bg);color:var(--warning-text);margin-left:6px;}
+.app-ask textarea{width:100%;min-height:64px;font-family:inherit;font-size:13px;padding:10px 12px;border:0.5px solid var(--border-md);border-radius:8px;resize:vertical;background:#FAFAFA;color:var(--text-primary);}
+.app-answer{margin-top:12px;font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;}
+@media (max-width:900px){.app-grid6{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
 /* Screens */
 .screen{display:none;}
 .screen.active{display:block;}
@@ -434,6 +461,9 @@ select.form-input{cursor:pointer;}
     </div>
     <div class="nav-item" data-screen="validation">
       <i class="ti ti-flask"></i> Validation
+    </div>
+    <div class="nav-item" data-screen="app">
+      <i class="ti ti-device-mobile"></i> App
     </div>
 
     <div class="nav-section">Operations</div>
@@ -875,6 +905,79 @@ select.form-input{cursor:pointer;}
         </div>
       </div>
 
+      <!-- APP TAB -->
+      <div class="screen" id="screen-app">
+        <div class="app-toolbar">
+          <div class="app-frame" id="app-frame">Among people who use the app — not the general population.</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <label class="app-toggle"><input type="checkbox" id="app-internal"> Include internal / test accounts</label>
+            <button class="app-btn" id="app-refresh">Refresh</button>
+          </div>
+        </div>
+        <div id="app-error" class="card" style="display:none;color:var(--danger-text);font-size:12px;"></div>
+
+        <div class="app-grid6">
+          <div class="app-stat"><div class="stat-label">App signups</div><div class="stat-value" id="app-k-signups">—</div><div class="stat-sub" id="app-k-signups-sub"></div></div>
+          <div class="app-stat"><div class="stat-label">Active last 7 days</div><div class="stat-value" id="app-k-active">—</div><div class="stat-sub" id="app-k-active-sub"></div></div>
+          <div class="app-stat"><div class="stat-label">Assessments in app</div><div class="stat-value" id="app-k-assess">—</div><div class="stat-sub" id="app-k-assess-sub"></div></div>
+          <div class="app-stat"><div class="stat-label">WhatsApp captured</div><div class="stat-value" id="app-k-wa">—</div><div class="stat-sub" id="app-k-wa-sub"></div></div>
+          <div class="app-stat"><div class="stat-label">Also took the web quiz</div><div class="stat-value" id="app-k-web">—</div><div class="stat-sub" id="app-k-web-sub"></div></div>
+          <div class="app-stat"><div class="stat-label">Likely uninstalled</div><div class="stat-value" id="app-k-unin">—</div><div class="stat-sub" id="app-k-unin-sub"></div></div>
+        </div>
+
+        <div class="two-col">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Signups per week</div></div>
+            <div id="app-weekly"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Sign-in method</div></div>
+            <div id="app-signin"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:14px;">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Inactivity by age band</div></div>
+            <div id="app-inactivity"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+            <div class="app-muted" style="font-size:10px;margin-top:8px;">Bands with fewer than 10 users show only n. Too small to read a pattern.</div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Notification response</div></div>
+            <div id="app-notifs"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:14px;">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Content opens by layer <span class="app-pill">Needs v1.2</span></div></div>
+            <div class="app-hatch">Video, article and case-study opens aren't tracked yet. This block lights up when app v1.2 ships.</div>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><div class="card-title">Funnel &amp; bookings</div></div>
+            <div id="app-funnel"><div class="empty" style="padding:20px 0;">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card-header">
+            <div class="card-title">Real users</div>
+            <button class="app-btn" id="app-users-btn">Show list</button>
+          </div>
+          <div id="app-users" class="app-muted" style="font-size:12px;">Hidden until you ask. This list is never sent to Claude.</div>
+        </div>
+
+        <div class="card app-ask">
+          <div class="card-header"><div class="card-title">Ask about this data</div></div>
+          <textarea id="app-ask-q" maxlength="500" placeholder="e.g. What stands out in the last two weeks? What should I fix first?"></textarea>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+            <button class="app-btn primary" id="app-ask-btn">Ask Claude</button>
+            <span class="app-muted" style="font-size:11px;">Runs only when you press the button. Claude sees counts only. No names, emails or health details.</span>
+          </div>
+          <div class="app-answer" id="app-answer"></div>
+        </div>
+      </div>
+
       <!-- VALIDATION DASHBOARD -->
       <div class="screen" id="screen-validation">
 
@@ -1179,6 +1282,7 @@ select.form-input{cursor:pointer;}
 const SUPABASE_URL = 'https://hcksvwxbjcehfxbfgqdo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_8P0solsUeueG2VXNWSoujg_UuTImaJH';
 const WORKER_URL = 'https://ab-coach-proxy.amit-baruna.workers.dev';
+const APP_API = 'https://metabolic-dashboard-api.amit-baruna.workers.dev';
 
 // ── State ─────────────────────────────────────────────────────
 let currentScreen = 'overview';
@@ -1192,8 +1296,50 @@ let currentProfileId = null;
 let currentLeadId = null;
 
 // ── Auth guard ────────────────────────────────────────────────
-const token = localStorage.getItem('sb_access_token');
+let token = localStorage.getItem('sb_access_token');
 if (!token) window.location.href = 'index.html';
+
+// Returns a valid access token, refreshing it (using the stored refresh token) when it is
+// expired or about to expire. Sends you back to the login page if refreshing fails.
+let _refreshing = null;
+function _jwtExp(t) {
+  try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000; } catch (e) { return 0; }
+}
+async function freshToken(force = false) {
+  if (!force && _jwtExp(token) - Date.now() > 120000) return token;
+  if (_refreshing) return _refreshing;
+  _refreshing = (async () => {
+    const rt = localStorage.getItem('sb_refresh_token');
+    if (!rt) { window.location.href = 'index.html'; return token; }
+    try {
+      const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+        body: JSON.stringify({ refresh_token: rt })
+      });
+      if (!r.ok) throw new Error('refresh failed');
+      const j = await r.json();
+      token = j.access_token;
+      localStorage.setItem('sb_access_token', j.access_token);
+      if (j.refresh_token) localStorage.setItem('sb_refresh_token', j.refresh_token);
+      return token;
+    } catch (e) {
+      localStorage.removeItem('sb_access_token');
+      window.location.href = 'index.html';
+      return token;
+    } finally { _refreshing = null; }
+  })();
+  return _refreshing;
+}
+
+// Claude relay call: sends your login so only you can use it
+async function claudeFetch(body) {
+  return fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + await freshToken() },
+    body: JSON.stringify(body)
+  });
+}
 
 // ── Supabase fetch ─────────────────────────────────────────────
 async function db(path, options = {}) {
@@ -1202,7 +1348,7 @@ async function db(path, options = {}) {
     headers: {
       'Content-Type': 'application/json',
       'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + token,
+      'Authorization': 'Bearer ' + await freshToken(),
       'Prefer': 'return=representation',
       ...(options.headers || {})
     }
@@ -1239,6 +1385,7 @@ function goScreen(name) {
     plans: 'Plans',
     analytics: 'Analytics',
     validation: 'Assessment Validation',
+    app: 'Metabolic Score App',
     profile: '',
     'lead-profile': ''
   };
@@ -1266,6 +1413,7 @@ function loadScreen(name) {
   if (name === 'plans') loadPlans();
   if (name === 'analytics') loadAnalytics();
   if (name === 'validation') loadValidation();
+  if (name === 'app') loadApp();
 }
 
 function getGreeting() {
@@ -1562,15 +1710,11 @@ Here is today's population data:
 Generate exactly 3 short coaching insights (1-2 sentences each). Each should be actionable, specific to this data, and help Amit decide what to do TODAY. Format as JSON array with fields: type (warn/positive/info), text (the insight). No preamble. JSON only.`;
 
   try {
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const res = await claudeFetch({
         model: 'claude-sonnet-4-6',
         max_tokens: 400,
         messages: [{ role: 'user', content: prompt }]
-      })
-    });
+      });
     const data = await res.json();
     const raw = data.content?.[0]?.text || '[]';
     const clean = raw.replace(/```json|```/g, '').trim();
@@ -2085,11 +2229,12 @@ function renderNarrativeReview(lead) {
 async function setNarrativeStatus(key, status) {
   if (!currentLeadId) return;
   try {
-    await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
+    const _r = await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + await freshToken(), 'Prefer': 'return=minimal' },
       body: JSON.stringify({ [`${key}_status`]: status })
     });
+    if (!_r.ok) throw new Error('save failed');
     const lead = allLeads.find(l => l.id === currentLeadId);
     if (lead) { lead[`${key}_status`] = status; renderNarrativeReview(lead); }
     showToast('Saved');
@@ -2102,11 +2247,12 @@ async function saveNarrativeFeedback(key) {
   const btn = document.getElementById(`lp-save-btn-${key}`);
   if (!ta) return;
   try {
-    await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
+    const _r = await fetch(SUPABASE_URL + '/rest/v1/leads?id=eq.' + currentLeadId, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Prefer': 'return=minimal' },
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + await freshToken(), 'Prefer': 'return=minimal' },
       body: JSON.stringify({ [`${key}_feedback`]: ta.value })
     });
+    if (!_r.ok) throw new Error('save failed');
     const lead = allLeads.find(l => l.id === currentLeadId);
     if (lead) lead[`${key}_feedback`] = ta.value;
     showToast('Feedback saved');
@@ -2221,15 +2367,11 @@ Rules:
 Return JSON only. No preamble.`;
 
   try {
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const res = await claudeFetch({
         model: 'claude-sonnet-4-6',
         max_tokens: 650,
         messages: [{ role: 'user', content: prompt }]
-      })
-    });
+      });
     const data = await res.json();
     const raw = data.content?.[0]?.text || data.narrative || '[]';
     const clean = raw.replace(/```json|```/g, '').trim();
@@ -2766,15 +2908,11 @@ Validation data (${totalLeads} assessments):
 Generate exactly 3 insights for improving the assessment engine. Each should tell Amit what to refine, scale, or investigate. Format as JSON array with fields: type (warn/positive/info), text. JSON only, no preamble.`;
 
   try {
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const res = await claudeFetch({
         model: 'claude-sonnet-4-6',
         max_tokens: 400,
         messages: [{ role: 'user', content: prompt }]
-      })
-    });
+      });
     const data = await res.json();
     const raw = data.content?.[0]?.text || '[]';
     const clean = raw.replace(/```json|```/g, '').trim();
@@ -3196,6 +3334,128 @@ async function addClient(data) {
     loadClients();
   }
 }
+
+// ── App tab ─────────────────────────────────────────────────────
+const _esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let appData = null;
+
+async function appApi(path, options = {}) {
+  const inc = document.getElementById('app-internal').checked ? '1' : '0';
+  const sep = path.includes('?') ? '&' : '?';
+  let res = await fetch(APP_API + path + (options.method === 'POST' ? '' : sep + 'internal=' + inc), {
+    ...options,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + await freshToken(), ...(options.headers || {}) }
+  });
+  if (res.status === 401) {
+    res = await fetch(APP_API + path + (options.method === 'POST' ? '' : sep + 'internal=' + inc), {
+      ...options,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + await freshToken(true), ...(options.headers || {}) }
+    });
+  }
+  if (!res.ok) throw new Error('App API ' + res.status);
+  return res.json();
+}
+
+function appSet(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+async function loadApp() {
+  const errEl = document.getElementById('app-error');
+  errEl.style.display = 'none';
+  try {
+    const d = await appApi('/app/overview');
+    appData = d;
+    renderApp(d);
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = 'Could not load app numbers. Try Refresh, or sign out and back in.';
+    errEl.style.display = 'block';
+  }
+}
+
+function renderApp(d) {
+  const n = d.signups.total;
+  document.getElementById('app-frame').textContent =
+    'Among people who use the app, not the general population. n=' + n + (d.frame.includes('yes') ? ' (internal accounts included)' : ' (internal accounts excluded)') + '. Updated ' + new Date(d.generated_at).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+
+  const setK = (id, val, sub) => { document.getElementById(id).textContent = val; document.getElementById(id + '-sub').textContent = sub || ''; };
+  setK('app-k-signups', d.signups.total, d.signups.last7 + ' new in the last 7 days');
+  setK('app-k-active', d.active_last_7_days.active, 'of ' + d.active_last_7_days.n + ' users');
+  setK('app-k-assess', d.assessments.total, d.assessments.users_with_any + ' of ' + d.assessments.n_users + ' users have taken it');
+  setK('app-k-wa', d.whatsapp.captured, 'of ' + d.whatsapp.n + ' users');
+  setK('app-k-web', d.funnel.app_users_who_also_took_web_quiz, 'of ' + d.funnel.app_signups + ' app users (web quiz: ' + d.funnel.web_quiz_people + ' people)');
+  setK('app-k-unin', d.likely_uninstalled.count, 'only ' + d.likely_uninstalled.n_users_with_push_token + ' users have push on');
+
+  // weekly bars
+  const wk = d.signups.per_week;
+  if (!wk.length) appSet('app-weekly', '<div class="empty" style="padding:20px 0;">No signups yet</div>');
+  else {
+    const max = Math.max(...wk.map(w => w.n), 1);
+    appSet('app-weekly', '<div class="app-bars">' + wk.map(w =>
+      `<div class="app-bar"><b>${w.n}</b><div class="fill" style="height:${Math.round(w.n / max * 78)}%"></div><span>${_esc(w.week.slice(5))}</span></div>`).join('') + '</div><div class="app-muted" style="font-size:10px;margin-top:6px;">Week starting (MM-DD)</div>');
+  }
+
+  // sign-in
+  const s = d.signin_methods;
+  const row = (label, v) => `<tr><td>${label}</td><td style="text-align:right;">${v}</td><td style="text-align:right;" class="app-muted">${s.n ? Math.round(v / s.n * 100) : 0}%</td></tr>`;
+  appSet('app-signin', `<table class="app-table"><tr><th>Method</th><th style="text-align:right;">Users</th><th style="text-align:right;">Share</th></tr>${row('Apple', s.apple)}${row('Google', s.google)}${row('Email', s.email)}</table>` +
+    (s.apple_email_not_shared ? `<div class="app-muted" style="font-size:11px;margin-top:8px;">${s.apple_email_not_shared} Apple account(s): email not shared. Can only be matched to the web quiz by WhatsApp.</div>` : '') +
+    `<div class="app-muted" style="font-size:10px;margin-top:6px;">n=${s.n}</div>`);
+
+  // inactivity
+  appSet('app-inactivity', '<table class="app-table"><tr><th>Age band</th><th style="text-align:right;">n</th><th style="text-align:right;">Inactive 7+ d</th><th style="text-align:right;">Inactive 14+ d</th></tr>' +
+    d.inactivity_by_age_band.filter(b => b.n > 0).map(b => b.suppressed
+      ? `<tr><td>${_esc(b.band)}</td><td style="text-align:right;">${b.n}</td><td colspan="2" class="app-muted" style="text-align:right;">too few to show</td></tr>`
+      : `<tr><td>${_esc(b.band)}</td><td style="text-align:right;">${b.n}</td><td style="text-align:right;">${b.inactive7}</td><td style="text-align:right;">${b.inactive14}</td></tr>`).join('') + '</table>');
+
+  // notifications
+  const nt = d.notifications;
+  const types = Object.entries(nt.by_type || {}).map(([k, v]) => `<tr><td>${_esc(k.replace(/_/g, ' '))}</td><td style="text-align:right;">${v}</td></tr>`).join('');
+  appSet('app-notifs', `<table class="app-table"><tr><td>Sent (attempted)</td><td style="text-align:right;">${nt.sent_attempted}</td></tr><tr><td>Swiped away in the app</td><td style="text-align:right;">${nt.dismissed}</td></tr><tr><td>Tapped</td><td style="text-align:right;" class="app-muted">not recorded yet</td></tr></table>` +
+    (types ? `<table class="app-table" style="margin-top:8px;">${types}</table>` : '') +
+    `<div class="app-muted" style="font-size:10px;margin-top:8px;">${nt.users_with_push_token} of ${nt.n_users} users have push notifications on. "Sent" means attempted, not delivered.</div>`);
+
+  // funnel + bookings
+  const f = d.funnel;
+  appSet('app-funnel', `<table class="app-table"><tr><td>Web quiz: people</td><td style="text-align:right;">${f.web_quiz_people}</td></tr><tr><td>Web quiz: submissions</td><td style="text-align:right;">${f.web_quiz_submissions}</td></tr><tr><td>App signups</td><td style="text-align:right;">${f.app_signups}</td></tr><tr><td>…who also took the web quiz</td><td style="text-align:right;">${f.app_users_who_also_took_web_quiz}</td></tr><tr><td>App users with an assessment</td><td style="text-align:right;">${f.app_users_with_assessment}</td></tr><tr><td>App bookings</td><td style="text-align:right;">${d.bookings.total}</td></tr></table>`);
+}
+
+document.getElementById('app-refresh').addEventListener('click', () => { loadApp(); if (document.getElementById('app-users-btn').dataset.open === '1') loadAppUsers(); });
+document.getElementById('app-internal').addEventListener('change', () => { loadApp(); if (document.getElementById('app-users-btn').dataset.open === '1') loadAppUsers(); });
+
+async function loadAppUsers() {
+  const box = document.getElementById('app-users');
+  box.textContent = 'Loading…';
+  try {
+    const { users } = await appApi('/app/users');
+    if (!users.length) { box.textContent = 'No users.'; return; }
+    box.innerHTML = '<table class="app-table"><tr><th>Email</th><th>Signed up</th><th>Method</th><th>Last activity</th><th>WhatsApp</th><th></th></tr>' + users.map(u =>
+      `<tr><td>${u.email ? _esc(u.email) : '<span class="app-muted">Apple · email not shared</span>'}</td><td>${_esc((u.signed_up || '').slice(0, 10))}</td><td>${_esc(u.method)}</td><td>${u.last_activity ? _esc(u.last_activity.slice(0, 10)) : '<span class="app-muted">never</span>'}</td><td>${u.has_whatsapp ? 'yes' : '—'}</td><td>${u.internal ? '<span class="app-pill">internal</span>' : ''}</td></tr>`).join('') + '</table>';
+  } catch (e) { box.textContent = 'Could not load the list.'; }
+}
+document.getElementById('app-users-btn').addEventListener('click', function () {
+  const box = document.getElementById('app-users');
+  if (this.dataset.open === '1') {
+    this.dataset.open = '0'; this.textContent = 'Show list';
+    box.textContent = 'Hidden until you ask. This list is never sent to Claude.';
+  } else {
+    this.dataset.open = '1'; this.textContent = 'Hide list';
+    loadAppUsers();
+  }
+});
+
+// Claude panel: runs ONLY when the button is pressed
+document.getElementById('app-ask-btn').addEventListener('click', async function () {
+  const q = document.getElementById('app-ask-q').value.trim();
+  const out = document.getElementById('app-answer');
+  if (!q) { out.textContent = 'Type a question first.'; return; }
+  this.disabled = true; out.textContent = 'Thinking…';
+  try {
+    const inc = document.getElementById('app-internal').checked ? '1' : '0';
+    const res = await appApi('/app/ask?internal=' + inc, { method: 'POST', body: JSON.stringify({ question: q }) });
+    out.textContent = res.answer || 'No answer.';
+  } catch (e) { out.textContent = 'Could not get an answer. Try again in a moment.'; }
+  this.disabled = false;
+});
 
 // ── Sign out ───────────────────────────────────────────────────
 function signOut() {
